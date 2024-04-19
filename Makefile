@@ -181,6 +181,20 @@ gen-docs: ## Gen Swagger docs using swag
 		fi; \
 	fi
 
+gen-pkg-docs: ## Gen Package docs using gomarkdoc
+	@if command -v gomarkdoc > /dev/null; then \
+		gomarkdoc --output '{{.Dir}}/README.md' ./...; \
+	else \
+		read -p "Go 'gomarkdoc' is not installed on your machine. Do you want to install it? [Y/n] " choice; \
+		if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
+			go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest; \
+			gomarkdoc --output '{{.Dir}}/README.md' ./...; \
+		else \
+			echo "You chose not to intall gomarkdoc. Exiting..."; \
+			exit 1; \
+		fi; \
+	fi
+
 fmt-docs: ## Format generated Swagger docs using swag
 	@if command -v swag > /dev/null; then \
 		swag fmt -d internal -g cmd/api/main.go; \
