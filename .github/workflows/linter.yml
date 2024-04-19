@@ -8,6 +8,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: read
+  pull-requests: read
+  checks: write
+
 jobs:
   linter:
     name: Linter
@@ -20,13 +25,7 @@ jobs:
         with:
           go-version: "1.21.3"
 
-      - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.57.2
-
-      - name: Commit report
-        run: |
-          git config --global user.name 'testname'
-          git config --global user.email 'testemail@users.noreply.github.com'
-
       - name: golangci-lint
-        run: golangci-lint run
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: v1.54
