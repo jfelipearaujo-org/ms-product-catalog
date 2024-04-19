@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: ${{ env.GO_VERSIONS }}
+        go-version: ${{ vars.GO_VERSIONS }}
     steps:
       - uses: actions/checkout@v3
 
