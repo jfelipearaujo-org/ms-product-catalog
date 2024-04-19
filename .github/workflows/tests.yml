@@ -7,9 +7,6 @@ on:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
-    paths:
-      - "**.go"
-      - "**.feature"
 
 jobs:
   test:
