@@ -86,7 +86,7 @@ docker-down: ## Shutdown app and db container
 ##@ Testing
 test: ## Test the application
 	@echo "Testing..."
-	@go test -race -count=1 ./... -coverprofile=coverage.out
+	@go test -race -count=1 ./internal/... -coverprofile=coverage.out
 
 cover: ## View the coverage
 	@echo "Analyzing coverage..."

@@ -21,7 +21,7 @@ jobs:
           go-version: "1.21.3"
 
       - name: Run Unit Tests
-        run: go test -count=1 -coverprofile=./cov.out ./internal/...
+        run: go test -race -count=1 -coverprofile=./cov.out ./internal/...
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v3
