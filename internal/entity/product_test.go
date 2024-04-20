@@ -1,9 +1,10 @@
-package entities
+package entity
 
 import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,6 +42,7 @@ func TestNewProduct(t *testing.T) {
 		now)
 
 	// Assert
+	assert.NoError(t, uuid.Validate(product.UUID))
 	assert.Equal(t, expected.Title, product.Title)
 	assert.Equal(t, expected.Description, product.Description)
 	assert.Equal(t, expected.Price, product.Price)
