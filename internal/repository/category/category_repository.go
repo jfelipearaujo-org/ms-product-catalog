@@ -88,7 +88,7 @@ func (repo *CategoryRepository) GetAll(ctx context.Context, filter repository.Pa
 
 	cursor, err := repo.collection.Find(ctx, bson.D{}, findOpts)
 	if err != nil {
-		return 0, categories, nil
+		return 0, categories, err
 	}
 	defer cursor.Close(ctx)
 
@@ -102,7 +102,7 @@ func (repo *CategoryRepository) GetAll(ctx context.Context, filter repository.Pa
 	}
 
 	if err := cursor.Err(); err != nil {
-		return 0, categories, err
+		return count, categories, err
 	}
 
 	return count, categories, nil
