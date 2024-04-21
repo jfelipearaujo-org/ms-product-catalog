@@ -1,0 +1,16 @@
+with-expecter: false
+packages:
+    github.com/jfelipearaujo-org/ms-product-catalog/internal/environment:
+        config:
+          filename: "{{ .InterfaceName | snakecase }}_mock.go"
+          dir: "./internal/environment/mocks"
+          mockname: "Mock{{.InterfaceName}}"
+          outpkg: "mocks"
+          include-regex: "(Environment)"
+    github.com/jfelipearaujo-org/ms-product-catalog/internal/handler:
+        config:
+          filename: "{{ .InterfaceName | snakecase }}_mock.go"
+          dir: "./internal/handler/mocks"
+          mockname: "Mock{{.InterfaceName}}"
+          outpkg: "mocks"
+          include-regex: "(Handler)"
