@@ -1,9 +1,10 @@
-package entities
+package entity
 
 import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,6 +24,7 @@ func TestNewCategory(t *testing.T) {
 
 	// Assert
 	assert.NotNil(t, category)
+	assert.NoError(t, uuid.Validate(category.UUID))
 	assert.Equal(t, expected.Title, category.Title)
 	assert.Equal(t, expected.Description, category.Description)
 	assert.Equal(t, expected.CreatedAt, category.CreatedAt)
