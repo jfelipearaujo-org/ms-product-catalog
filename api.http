@@ -1,0 +1,5 @@
+@host=http://localhost:8080
+
+### Health Check
+GET {{host}}/health
+Content-Type: application/json
