@@ -7,10 +7,10 @@ packages:
           mockname: "Mock{{.InterfaceName}}"
           outpkg: "mocks"
           include-regex: "(Environment)"
-    github.com/jfelipearaujo-org/ms-product-catalog/internal/handler:
+    github.com/jfelipearaujo-org/ms-product-catalog/internal/repository:
         config:
           filename: "{{ .InterfaceName | snakecase }}_mock.go"
-          dir: "./internal/handler/mocks"
+          dir: "./internal/repository/mocks"
           mockname: "Mock{{.InterfaceName}}"
           outpkg: "mocks"
-          include-regex: "(Handler)"
+          include-regex: "(Repository)"

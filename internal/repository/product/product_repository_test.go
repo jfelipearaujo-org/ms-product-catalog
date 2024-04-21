@@ -1,18 +1,17 @@
-package category
+package product
 
 import (
 	"context"
 	"testing"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
-
 	"github.com/google/uuid"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 )
 
 var (
@@ -22,39 +21,47 @@ var (
 	}
 )
 
-func getPrimitiveCategory(id string, now time.Time) bson.D {
+func getPrimitiveProduct(id string, now time.Time) bson.D {
 	return bson.D{
 		{Key: "uuid", Value: id},
-		{Key: "title", Value: "category title"},
-		{Key: "description", Value: "category description"},
+		{Key: "title", Value: "product title"},
+		{Key: "description", Value: "product description"},
+		{Key: "price", Value: 10.0},
+		{Key: "category", Value: bson.D{
+			{Key: "uuid", Value: id},
+			{Key: "title", Value: "category title"},
+			{Key: "description", Value: "category description"},
+			{Key: "created_at", Value: now},
+			{Key: "updated_at", Value: now},
+		}},
 		{Key: "created_at", Value: now},
 		{Key: "updated_at", Value: now},
 	}
 }
 
-func TestNewCategoryRepository(t *testing.T) {
+func TestNewProductRepository(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
-	mt.Run("Should return a new category repository", func(mt *mtest.T) {
+	mt.Run("Should return a new product repository", func(mt *mtest.T) {
 		// Arrange
-		expected := &CategoryRepository{
-			collection: mt.DB.Collection(CategoryCollection),
+		expected := &ProductRepository{
+			collection: mt.DB.Collection(ProductCollection),
 		}
 
 		// Act
-		resp := NewCategoryRepository(mt.DB)
+		resp := NewProductRepository(mt.DB)
 
 		// Assert
 		assert.IsType(mt, expected, resp)
 	})
 }
 
-func TestCategoryRepository_Create(t *testing.T) {
+func TestProductRepository_Create(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
-	mt.Run("Should create a new category", func(mt *mtest.T) {
+	mt.Run("Should create a new product", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		mt.AddMockResponses(mtest.CreateSuccessResponse())
 
@@ -62,107 +69,89 @@ func TestCategoryRepository_Create(t *testing.T) {
 
 		emptyId := primitive.NewObjectID()
 
-		category := entity.NewCategory("category title", "category description", now)
+		category := entity.NewCategory("title", "description", now)
+
+		product := entity.NewProduct("title", "description", 10.0, *category, now)
 
 		// Act
-		err := repo.Create(context.Background(), category)
+		err := repo.Create(context.Background(), product)
 
 		// Assert
 		assert.NoError(mt, err)
-		assert.NotEqual(mt, emptyId, category.Id)
+		assert.NotEqual(mt, emptyId, product.Id)
 	})
 
 	mt.Run("Should return error when InsertOne fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		mt.AddMockResponses(mongoInvalidOperation)
 
 		now := time.Now()
 
-		category := entity.NewCategory("category title", "category description", now)
+		category := entity.NewCategory("title", "description", now)
+
+		product := entity.NewProduct("title", "description", 10.0, *category, now)
 
 		// Act
-		err := repo.Create(context.Background(), category)
+		err := repo.Create(context.Background(), product)
 
 		// Assert
 		assert.Error(mt, err)
 	})
 }
 
-func TestCategoryRepository_GetByID(t *testing.T) {
+func TestProductRepository_GetByID(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
-	mt.Run("Should get a category by ID", func(mt *mtest.T) {
+	mt.Run("Should return error when nothing is found", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
-		id := uuid.NewString()
-		now := time.Now().UTC().Truncate(time.Millisecond)
-
-		mt.AddMockResponses(mtest.CreateCursorResponse(1,
+		mt.AddMockResponses(mtest.CreateCursorResponse(0,
 			"foo.bar",
-			mtest.FirstBatch,
-			getPrimitiveCategory(id, now)))
-
-		expected := &entity.Category{
-			UUID:        id,
-			Title:       "category title",
-			Description: "category description",
-			CreatedAt:   now,
-			UpdatedAt:   now,
-		}
+			mtest.FirstBatch))
 
 		// Act
-		resp, err := repo.GetByID(context.Background(), id)
+		resp, err := repo.GetByID(context.Background(), "product title")
 
 		// Assert
-		assert.NoError(mt, err)
-		assert.Equal(mt, expected, resp)
+		assert.Error(mt, err)
+		assert.ErrorIs(mt, err, ErrProductNotFound)
+		assert.Nil(mt, resp)
 	})
 }
 
-func TestCategoryRepository_GetByTitle(t *testing.T) {
+func TestProductRepository_GetByTitle(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
-	mt.Run("Should get a category by Title", func(mt *mtest.T) {
+	mt.Run("Should return error when nothing is found", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
-		id := uuid.NewString()
-		now := time.Now().UTC().Truncate(time.Millisecond)
-
-		mt.AddMockResponses(mtest.CreateCursorResponse(1,
+		mt.AddMockResponses(mtest.CreateCursorResponse(0,
 			"foo.bar",
-			mtest.FirstBatch,
-			getPrimitiveCategory(id, now)))
-
-		expected := &entity.Category{
-			UUID:        id,
-			Title:       "category title",
-			Description: "category description",
-			CreatedAt:   now,
-			UpdatedAt:   now,
-		}
+			mtest.FirstBatch))
 
 		// Act
-		resp, err := repo.GetByTitle(context.Background(), "category title")
+		resp, err := repo.GetByTitle(context.Background(), "product title")
 
 		// Assert
-		assert.NoError(mt, err)
-		assert.Equal(mt, expected, resp)
+		assert.Error(mt, err)
+		assert.ErrorIs(mt, err, ErrProductNotFound)
+		assert.Nil(mt, resp)
 	})
 }
 
-func TestCategoryRepository_GetAll(t *testing.T) {
+func TestProductRepository_GetByCategoryID(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
-	mt.Run("Should return a list of categories paginated", func(mt *mtest.T) {
+	mt.Run("Should return a list of products paginated", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
-		now := time.Now().UTC().Truncate(time.Millisecond)
+		now := time.Now().UTC().Truncate(time.Second)
 
 		pagination := repository.Pagination{
 			Page: 1,
@@ -179,7 +168,97 @@ func TestCategoryRepository_GetAll(t *testing.T) {
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
-				getPrimitiveCategory(id, now)),
+				getPrimitiveProduct(id, now)),
+			mtest.CreateCursorResponse(0,
+				"foo.bar",
+				mtest.NextBatch),
+		}...)
+
+		var expectedCount int64 = 1
+		var expectedLength int = 1
+
+		// Act
+		count, resp, err := repo.GetByCategoryID(context.Background(), id, pagination)
+
+		// Assert
+		assert.NoError(mt, err)
+		assert.Equal(mt, expectedCount, count)
+		assert.NotNil(mt, resp)
+		assert.Len(mt, resp, expectedLength)
+	})
+}
+
+func TestProductRepository_GetByCategoryTitle(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	mt.Run("Should return a list of products paginated", func(mt *mtest.T) {
+		// Arrange
+		repo := NewProductRepository(mt.DB)
+
+		id := uuid.NewString()
+		now := time.Now().UTC().Truncate(time.Second)
+
+		pagination := repository.Pagination{
+			Page: 1,
+			Size: 1,
+		}
+
+		mt.AddMockResponses([]primitive.D{
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				getPrimitiveProduct(id, now)),
+			mtest.CreateCursorResponse(0,
+				"foo.bar",
+				mtest.NextBatch),
+		}...)
+
+		var expectedCount int64 = 1
+		var expectedLength int = 1
+
+		// Act
+		count, resp, err := repo.GetByCategoryTitle(context.Background(), "product title", pagination)
+
+		// Assert
+		assert.NoError(mt, err)
+		assert.Equal(mt, expectedCount, count)
+		assert.NotNil(mt, resp)
+		assert.Len(mt, resp, expectedLength)
+	})
+}
+
+func TestProductRepository_GetByAll(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+	mt.Run("Should return a list of products paginated", func(mt *mtest.T) {
+		// Arrange
+		repo := NewProductRepository(mt.DB)
+
+		id := uuid.NewString()
+		now := time.Now().UTC().Truncate(time.Second)
+
+		pagination := repository.Pagination{
+			Page: 1,
+			Size: 1,
+		}
+
+		mt.AddMockResponses([]primitive.D{
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				getPrimitiveProduct(id, now)),
 			mtest.CreateCursorResponse(0,
 				"foo.bar",
 				mtest.NextBatch),
@@ -199,31 +278,27 @@ func TestCategoryRepository_GetAll(t *testing.T) {
 	})
 }
 
-func TestCategoryRepository_Update(t *testing.T) {
+func TestProductRepository_Update(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
-	mt.Run("Should update a category", func(mt *mtest.T) {
+	mt.Run("Should update a product", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
-		now := time.Now().UTC().Truncate(time.Millisecond)
+		now := time.Now().UTC().Truncate(time.Second)
 
 		mt.AddMockResponses(bson.D{
 			{Key: "ok", Value: 1},
-			{Key: "value", Value: bson.D{
-				{Key: "uuid", Value: id},
-				{Key: "title", Value: "category title"},
-				{Key: "description", Value: "category description"},
-				{Key: "created_at", Value: now},
-				{Key: "updated_at", Value: now},
-			}},
+			{Key: "value", Value: getPrimitiveProduct(id, now)},
 		})
 
-		category := entity.NewCategory("category title", "category description", now)
+		category := entity.NewCategory("title", "description", now)
+
+		product := entity.NewProduct("title", "description", 10.0, *category, now)
 
 		// Act
-		err := repo.Update(context.Background(), category)
+		err := repo.Update(context.Background(), product)
 
 		// Assert
 		assert.NoError(mt, err)
@@ -231,16 +306,18 @@ func TestCategoryRepository_Update(t *testing.T) {
 
 	mt.Run("Should return error when Decode fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
-		now := time.Now().UTC().Truncate(time.Millisecond)
+		now := time.Now().UTC().Truncate(time.Second)
 
 		mt.AddMockResponses(mongoInvalidOperation)
 
-		category := entity.NewCategory("category title", "category description", now)
+		category := entity.NewCategory("title", "description", now)
+
+		product := entity.NewProduct("title", "description", 10.0, *category, now)
 
 		// Act
-		err := repo.Update(context.Background(), category)
+		err := repo.Update(context.Background(), product)
 
 		// Assert
 		assert.Error(mt, err)
@@ -248,29 +325,31 @@ func TestCategoryRepository_Update(t *testing.T) {
 
 	mt.Run("Should return error when Id is not found", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
-		now := time.Now().UTC().Truncate(time.Millisecond)
+		now := time.Now().UTC().Truncate(time.Second)
 
 		mt.AddMockResponses(mtest.CreateCursorResponse(0, "foo.bar", mtest.FirstBatch))
 
-		category := entity.NewCategory("category title", "category description", now)
+		category := entity.NewCategory("title", "description", now)
+
+		product := entity.NewProduct("title", "description", 10.0, *category, now)
 
 		// Act
-		err := repo.Update(context.Background(), category)
+		err := repo.Update(context.Background(), product)
 
 		// Assert
 		assert.Error(mt, err)
-		assert.ErrorIs(mt, err, ErrCategoryNotFound)
+		assert.ErrorIs(mt, err, ErrProductNotFound)
 	})
 }
 
-func TestCategoryRepository_Delete(t *testing.T) {
+func TestProductRepository_Delete(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
-	mt.Run("Should delete a category", func(mt *mtest.T) {
+	mt.Run("Should delete a product", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -289,7 +368,7 @@ func TestCategoryRepository_Delete(t *testing.T) {
 
 	mt.Run("Should return error when DeleteOne fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -304,7 +383,7 @@ func TestCategoryRepository_Delete(t *testing.T) {
 
 	mt.Run("Should return error when nothing was deleted", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -322,27 +401,35 @@ func TestCategoryRepository_Delete(t *testing.T) {
 	})
 }
 
-func TestCategoryRepository_getOneByField(t *testing.T) {
+func TestProductRepository_getOneByField(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
-	mt.Run("Should get a category by ID", func(mt *mtest.T) {
+	mt.Run("Should return a product by ID", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
-		now := time.Now().UTC().Truncate(time.Millisecond)
+		now := time.Now().UTC().Truncate(time.Second)
 
 		mt.AddMockResponses(mtest.CreateCursorResponse(1,
 			"foo.bar",
 			mtest.FirstBatch,
-			getPrimitiveCategory(id, now)))
+			getPrimitiveProduct(id, now)))
 
-		expected := &entity.Category{
+		expected := &entity.Product{
 			UUID:        id,
-			Title:       "category title",
-			Description: "category description",
-			CreatedAt:   now,
-			UpdatedAt:   now,
+			Title:       "product title",
+			Description: "product description",
+			Price:       10.0,
+			Category: entity.Category{
+				UUID:        id,
+				Title:       "category title",
+				Description: "category description",
+				CreatedAt:   now,
+				UpdatedAt:   now,
+			},
+			CreatedAt: now,
+			UpdatedAt: now,
 		}
 
 		// Act
@@ -355,7 +442,7 @@ func TestCategoryRepository_getOneByField(t *testing.T) {
 
 	mt.Run("Should return error when Decode fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -371,7 +458,7 @@ func TestCategoryRepository_getOneByField(t *testing.T) {
 
 	mt.Run("Should return error when nothing is found", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -384,20 +471,20 @@ func TestCategoryRepository_getOneByField(t *testing.T) {
 
 		// Assert
 		assert.Error(mt, err)
-		assert.ErrorIs(mt, err, ErrCategoryNotFound)
+		assert.ErrorIs(mt, err, ErrProductNotFound)
 		assert.Nil(mt, resp)
 	})
 }
 
-func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
+func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
-	mt.Run("Should return a list of categories paginated", func(mt *mtest.T) {
+	mt.Run("Should return a list of products paginated", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
-		now := time.Now().UTC().Truncate(time.Millisecond)
+		now := time.Now().UTC().Truncate(time.Second)
 
 		pagination := repository.Pagination{
 			Page: 1,
@@ -414,7 +501,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
-				getPrimitiveCategory(id, now)),
+				getPrimitiveProduct(id, now)),
 			mtest.CreateCursorResponse(0,
 				"foo.bar",
 				mtest.NextBatch),
@@ -424,7 +511,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 		var expectedLength int = 1
 
 		// Act
-		count, resp, err := repo.getManyByFieldPaginated(context.Background(), bson.M{"uuid": id}, pagination)
+		count, resp, err := repo.getManyByFieldPaginated(context.Background(), bson.M{"category.uuid": id}, pagination)
 
 		// Assert
 		assert.NoError(mt, err)
@@ -435,7 +522,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error when CountDocuments fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -452,7 +539,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 		var expectedLength int = 0
 
 		// Act
-		count, resp, err := repo.getManyByFieldPaginated(context.Background(), bson.M{"uuid": id}, pagination)
+		count, resp, err := repo.getManyByFieldPaginated(context.Background(), bson.M{"category.uuid": id}, pagination)
 
 		// Assert
 		assert.Error(mt, err)
@@ -462,7 +549,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error when Find fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -485,7 +572,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 		var expectedLength int = 0
 
 		// Act
-		count, resp, err := repo.getManyByFieldPaginated(context.Background(), bson.M{"uuid": id}, pagination)
+		count, resp, err := repo.getManyByFieldPaginated(context.Background(), bson.M{"category.uuid": id}, pagination)
 
 		// Assert
 		assert.Error(mt, err)
@@ -495,7 +582,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error when Decode fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -523,7 +610,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 		var expectedLength int = 0
 
 		// Act
-		count, resp, err := repo.getManyByFieldPaginated(context.Background(), bson.M{"uuid": id}, pagination)
+		count, resp, err := repo.getManyByFieldPaginated(context.Background(), bson.M{"category.uuid": id}, pagination)
 
 		// Assert
 		assert.Error(mt, err)
@@ -533,7 +620,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error from Cursor", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewProductRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
@@ -553,7 +640,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
-				getPrimitiveCategory(id, now)),
+				getPrimitiveProduct(id, now)),
 			mongoInvalidOperation,
 		}...)
 
@@ -561,7 +648,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 		var expectedLength int = 0
 
 		// Act
-		count, resp, err := repo.getManyByFieldPaginated(context.Background(), bson.M{"uuid": id}, pagination)
+		count, resp, err := repo.getManyByFieldPaginated(context.Background(), bson.M{"category.uuid": id}, pagination)
 
 		// Assert
 		assert.Error(mt, err)
