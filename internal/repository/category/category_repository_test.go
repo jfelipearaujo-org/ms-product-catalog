@@ -7,7 +7,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 
 	"github.com/google/uuid"
@@ -20,10 +19,6 @@ var (
 	// A key `ok` and value -1 is considered a mongo error
 	mongoInvalidOperation primitive.D = bson.D{
 		{Key: "ok", Value: -1},
-	}
-
-	mongoCommandError error = mongo.CommandError{
-		Message: "command failed",
 	}
 )
 
