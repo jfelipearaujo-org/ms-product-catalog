@@ -7,6 +7,7 @@ import (
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -30,82 +31,26 @@ func NewCategoryRepository(db *mongo.Database) *CategoryRepository {
 }
 
 func (repo *CategoryRepository) Create(ctx context.Context, category *entity.Category) error {
-	_, err := repo.collection.InsertOne(ctx, category)
+	res, err := repo.collection.InsertOne(ctx, category)
+	if err != nil {
+		return err
+	}
+
+	category.Id = res.InsertedID.(primitive.ObjectID)
 
 	return err
 }
 
 func (repo *CategoryRepository) GetByID(ctx context.Context, id string) (*entity.Category, error) {
-	resp := repo.collection.FindOne(ctx, bson.M{"uuid": id})
-
-	var category entity.Category
-
-	if err := resp.Decode(&category); err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, ErrCategoryNotFound
-		}
-
-		return nil, err
-	}
-
-	return &category, nil
+	return repo.getOneByField(ctx, "uuid", id)
 }
 
 func (repo *CategoryRepository) GetByTitle(ctx context.Context, title string) (*entity.Category, error) {
-	resp := repo.collection.FindOne(ctx, bson.M{"title": title})
-
-	var category entity.Category
-
-	if err := resp.Decode(&category); err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, ErrCategoryNotFound
-		}
-
-		return nil, err
-	}
-
-	return &category, nil
+	return repo.getOneByField(ctx, "title", title)
 }
 
-func (repo *CategoryRepository) GetAll(ctx context.Context, filter repository.Pagination) (int64, []entity.Category, error) {
-	var categories []entity.Category
-
-	countOpts := options.Count().SetHint("_id_")
-	count, err := repo.collection.CountDocuments(ctx, bson.D{}, countOpts)
-	if err != nil {
-		return 0, categories, err
-	}
-
-	skip := filter.Page*filter.Size - filter.Size
-
-	findOpts := options.Find().
-		SetLimit(filter.Size).
-		SetSkip(skip).
-		SetSort(bson.D{{
-			Key:   "created_at",
-			Value: 1,
-		}})
-
-	cursor, err := repo.collection.Find(ctx, bson.D{}, findOpts)
-	if err != nil {
-		return 0, categories, err
-	}
-	defer cursor.Close(ctx)
-
-	for cursor.Next(ctx) {
-		category := entity.Category{}
-		if err := cursor.Decode(&category); err != nil {
-			return 0, categories, err
-		}
-
-		categories = append(categories, category)
-	}
-
-	if err := cursor.Err(); err != nil {
-		return count, categories, err
-	}
-
-	return count, categories, nil
+func (repo *CategoryRepository) GetAll(ctx context.Context, pagination repository.Pagination) (int64, []entity.Category, error) {
+	return repo.getManyByFieldPaginated(ctx, bson.M{}, pagination)
 }
 
 func (repo *CategoryRepository) Update(ctx context.Context, category *entity.Category) error {
@@ -141,4 +86,52 @@ func (repo *CategoryRepository) Delete(ctx context.Context, id string) error {
 	}
 
 	return err
+}
+
+// private methods
+func (repo *CategoryRepository) getOneByField(ctx context.Context, field string, value string) (*entity.Category, error) {
+	resp := repo.collection.FindOne(ctx, bson.M{field: value})
+
+	var category entity.Category
+
+	if err := resp.Decode(&category); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, ErrCategoryNotFound
+		}
+
+		return nil, err
+	}
+
+	return &category, nil
+}
+
+func (repo *CategoryRepository) getManyByFieldPaginated(ctx context.Context, query primitive.M, pagination repository.Pagination) (int64, []entity.Category, error) {
+	var categories []entity.Category
+
+	countOpts := options.Count().SetHint("_id_")
+	count, err := repo.collection.CountDocuments(ctx, bson.M{}, countOpts)
+	if err != nil {
+		return 0, categories, err
+	}
+
+	skip := pagination.Page*pagination.Size - pagination.Size
+
+	findOpts := options.Find().
+		SetLimit(pagination.Size).
+		SetSkip(skip).
+		SetSort(bson.D{{
+			Key:   "created_at",
+			Value: 1,
+		}})
+
+	resp, err := repo.collection.Find(ctx, query, findOpts)
+	if err != nil {
+		return count, categories, err
+	}
+
+	if err := resp.All(ctx, &categories); err != nil {
+		return count, categories, err
+	}
+
+	return count, categories, nil
 }

@@ -4,10 +4,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Category struct {
-	UUID string `bson:"uuid"`
+	Id   primitive.ObjectID `bson:"_id,omitempty"`
+	UUID string             `bson:"uuid"`
 
 	Title       string `bson:"title"`
 	Description string `bson:"description"`
