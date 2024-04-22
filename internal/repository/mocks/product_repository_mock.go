@@ -16,17 +16,17 @@ type MockProductRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: ctx, category
-func (_m *MockProductRepository) Create(ctx context.Context, category *entity.Category) error {
-	ret := _m.Called(ctx, category)
+// Create provides a mock function with given fields: ctx, product
+func (_m *MockProductRepository) Create(ctx context.Context, product *entity.Product) error {
+	ret := _m.Called(ctx, product)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.Category) error); ok {
-		r0 = rf(ctx, category)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Product) error); ok {
+		r0 = rf(ctx, product)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -53,7 +53,7 @@ func (_m *MockProductRepository) Delete(ctx context.Context, id string) error {
 }
 
 // GetAll provides a mock function with given fields: ctx, filter
-func (_m *MockProductRepository) GetAll(ctx context.Context, filter repository.Pagination) (int64, []*entity.Category, error) {
+func (_m *MockProductRepository) GetAll(ctx context.Context, filter repository.Pagination) (int64, []entity.Product, error) {
 	ret := _m.Called(ctx, filter)
 
 	if len(ret) == 0 {
@@ -61,9 +61,9 @@ func (_m *MockProductRepository) GetAll(ctx context.Context, filter repository.P
 	}
 
 	var r0 int64
-	var r1 []*entity.Category
+	var r1 []entity.Product
 	var r2 error
-	if rf, ok := ret.Get(0).(func(context.Context, repository.Pagination) (int64, []*entity.Category, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, repository.Pagination) (int64, []entity.Product, error)); ok {
 		return rf(ctx, filter)
 	}
 	if rf, ok := ret.Get(0).(func(context.Context, repository.Pagination) int64); ok {
@@ -72,11 +72,11 @@ func (_m *MockProductRepository) GetAll(ctx context.Context, filter repository.P
 		r0 = ret.Get(0).(int64)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, repository.Pagination) []*entity.Category); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, repository.Pagination) []entity.Product); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		if ret.Get(1) != nil {
-			r1 = ret.Get(1).([]*entity.Category)
+			r1 = ret.Get(1).([]entity.Product)
 		}
 	}
 
@@ -164,24 +164,22 @@ func (_m *MockProductRepository) GetByCategoryTitle(ctx context.Context, categor
 }
 
 // GetByID provides a mock function with given fields: ctx, id
-func (_m *MockProductRepository) GetByID(ctx context.Context, id string) (*entity.Category, error) {
+func (_m *MockProductRepository) GetByID(ctx context.Context, id string) (entity.Product, error) {
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetByID")
 	}
 
-	var r0 *entity.Category
+	var r0 entity.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (*entity.Category, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) (entity.Product, error)); ok {
 		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) *entity.Category); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) entity.Product); ok {
 		r0 = rf(ctx, id)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Category)
-		}
+		r0 = ret.Get(0).(entity.Product)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
@@ -194,24 +192,22 @@ func (_m *MockProductRepository) GetByID(ctx context.Context, id string) (*entit
 }
 
 // GetByTitle provides a mock function with given fields: ctx, title
-func (_m *MockProductRepository) GetByTitle(ctx context.Context, title string) (*entity.Category, error) {
+func (_m *MockProductRepository) GetByTitle(ctx context.Context, title string) (entity.Product, error) {
 	ret := _m.Called(ctx, title)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetByTitle")
 	}
 
-	var r0 *entity.Category
+	var r0 entity.Product
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (*entity.Category, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) (entity.Product, error)); ok {
 		return rf(ctx, title)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) *entity.Category); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) entity.Product); ok {
 		r0 = rf(ctx, title)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Category)
-		}
+		r0 = ret.Get(0).(entity.Product)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
@@ -223,17 +219,17 @@ func (_m *MockProductRepository) GetByTitle(ctx context.Context, title string) (
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, category
-func (_m *MockProductRepository) Update(ctx context.Context, category *entity.Category) error {
-	ret := _m.Called(ctx, category)
+// Update provides a mock function with given fields: ctx, product
+func (_m *MockProductRepository) Update(ctx context.Context, product *entity.Product) error {
+	ret := _m.Called(ctx, product)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Update")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.Category) error); ok {
-		r0 = rf(ctx, category)
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Product) error); ok {
+		r0 = rf(ctx, product)
 	} else {
 		r0 = ret.Error(0)
 	}

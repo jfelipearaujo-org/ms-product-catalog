@@ -105,7 +105,7 @@ func TestCategoryRepository_GetByID(t *testing.T) {
 			mtest.FirstBatch,
 			getPrimitiveCategory(id, now)))
 
-		expected := &entity.Category{
+		expected := entity.Category{
 			UUID:        id,
 			Title:       "category title",
 			Description: "category description",
@@ -137,7 +137,7 @@ func TestCategoryRepository_GetByTitle(t *testing.T) {
 			mtest.FirstBatch,
 			getPrimitiveCategory(id, now)))
 
-		expected := &entity.Category{
+		expected := entity.Category{
 			UUID:        id,
 			Title:       "category title",
 			Description: "category description",
@@ -337,7 +337,7 @@ func TestCategoryRepository_getOneByField(t *testing.T) {
 			mtest.FirstBatch,
 			getPrimitiveCategory(id, now)))
 
-		expected := &entity.Category{
+		expected := entity.Category{
 			UUID:        id,
 			Title:       "category title",
 			Description: "category description",
@@ -366,7 +366,7 @@ func TestCategoryRepository_getOneByField(t *testing.T) {
 
 		// Assert
 		assert.Error(mt, err)
-		assert.Nil(mt, resp)
+		assert.Empty(mt, resp)
 	})
 
 	mt.Run("Should return error when nothing is found", func(mt *mtest.T) {
@@ -385,7 +385,7 @@ func TestCategoryRepository_getOneByField(t *testing.T) {
 		// Assert
 		assert.Error(mt, err)
 		assert.ErrorIs(mt, err, ErrCategoryNotFound)
-		assert.Nil(mt, resp)
+		assert.Empty(mt, resp)
 	})
 }
 
