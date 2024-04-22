@@ -41,11 +41,11 @@ func (repo *ProductRepository) Create(ctx context.Context, product *entity.Produ
 	return err
 }
 
-func (repo *ProductRepository) GetByID(ctx context.Context, id string) (*entity.Product, error) {
+func (repo *ProductRepository) GetByID(ctx context.Context, id string) (entity.Product, error) {
 	return repo.getOneByField(ctx, "uuid", id)
 }
 
-func (repo *ProductRepository) GetByTitle(ctx context.Context, title string) (*entity.Product, error) {
+func (repo *ProductRepository) GetByTitle(ctx context.Context, title string) (entity.Product, error) {
 	return repo.getOneByField(ctx, "title", title)
 }
 
@@ -99,20 +99,20 @@ func (repo *ProductRepository) Delete(ctx context.Context, id string) error {
 }
 
 // private methods
-func (repo *ProductRepository) getOneByField(ctx context.Context, field string, value string) (*entity.Product, error) {
+func (repo *ProductRepository) getOneByField(ctx context.Context, field string, value string) (entity.Product, error) {
 	resp := repo.collection.FindOne(ctx, bson.M{field: value})
 
 	var product entity.Product
 
 	if err := resp.Decode(&product); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, ErrProductNotFound
+			return product, ErrProductNotFound
 		}
 
-		return nil, err
+		return product, err
 	}
 
-	return &product, nil
+	return product, nil
 }
 
 func (repo *ProductRepository) getManyByFieldPaginated(ctx context.Context, query primitive.M, pagination repository.Pagination) (int64, []entity.Product, error) {

@@ -41,11 +41,11 @@ func (repo *CategoryRepository) Create(ctx context.Context, category *entity.Cat
 	return err
 }
 
-func (repo *CategoryRepository) GetByID(ctx context.Context, id string) (*entity.Category, error) {
+func (repo *CategoryRepository) GetByID(ctx context.Context, id string) (entity.Category, error) {
 	return repo.getOneByField(ctx, "uuid", id)
 }
 
-func (repo *CategoryRepository) GetByTitle(ctx context.Context, title string) (*entity.Category, error) {
+func (repo *CategoryRepository) GetByTitle(ctx context.Context, title string) (entity.Category, error) {
 	return repo.getOneByField(ctx, "title", title)
 }
 
@@ -89,20 +89,20 @@ func (repo *CategoryRepository) Delete(ctx context.Context, id string) error {
 }
 
 // private methods
-func (repo *CategoryRepository) getOneByField(ctx context.Context, field string, value string) (*entity.Category, error) {
+func (repo *CategoryRepository) getOneByField(ctx context.Context, field string, value string) (entity.Category, error) {
 	resp := repo.collection.FindOne(ctx, bson.M{field: value})
 
 	var category entity.Category
 
 	if err := resp.Decode(&category); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, ErrCategoryNotFound
+			return category, ErrCategoryNotFound
 		}
 
-		return nil, err
+		return category, err
 	}
 
-	return &category, nil
+	return category, nil
 }
 
 func (repo *CategoryRepository) getManyByFieldPaginated(ctx context.Context, query primitive.M, pagination repository.Pagination) (int64, []entity.Category, error) {

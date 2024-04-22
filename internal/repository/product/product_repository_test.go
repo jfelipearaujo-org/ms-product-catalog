@@ -118,7 +118,7 @@ func TestProductRepository_GetByID(t *testing.T) {
 		// Assert
 		assert.Error(mt, err)
 		assert.ErrorIs(mt, err, ErrProductNotFound)
-		assert.Nil(mt, resp)
+		assert.Empty(mt, resp)
 	})
 }
 
@@ -139,7 +139,7 @@ func TestProductRepository_GetByTitle(t *testing.T) {
 		// Assert
 		assert.Error(mt, err)
 		assert.ErrorIs(mt, err, ErrProductNotFound)
-		assert.Nil(mt, resp)
+		assert.Empty(mt, resp)
 	})
 }
 
@@ -416,7 +416,7 @@ func TestProductRepository_getOneByField(t *testing.T) {
 			mtest.FirstBatch,
 			getPrimitiveProduct(id, now)))
 
-		expected := &entity.Product{
+		expected := entity.Product{
 			UUID:        id,
 			Title:       "product title",
 			Description: "product description",
@@ -453,7 +453,7 @@ func TestProductRepository_getOneByField(t *testing.T) {
 
 		// Assert
 		assert.Error(mt, err)
-		assert.Nil(mt, resp)
+		assert.Empty(mt, resp)
 	})
 
 	mt.Run("Should return error when nothing is found", func(mt *mtest.T) {
@@ -472,7 +472,7 @@ func TestProductRepository_getOneByField(t *testing.T) {
 		// Assert
 		assert.Error(mt, err)
 		assert.ErrorIs(mt, err, ErrProductNotFound)
-		assert.Nil(mt, resp)
+		assert.Empty(mt, resp)
 	})
 }
 
