@@ -3,3 +3,7 @@
 ### Health Check
 GET {{host}}/health
 Content-Type: application/json
+
+### Categories
+GET {{host}}/api/v1/categories?title=category
+Content-Type: application/json

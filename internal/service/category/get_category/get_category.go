@@ -6,10 +6,11 @@ import (
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/shared/errors"
 )
 
-type GetCategory interface {
-	Handle(ctx context.Context, request GetCategoryDto) (entity.Category, error)
+type GetCategoryService interface {
+	Handle(ctx context.Context, pagination common.Pagination, request GetCategoryDto) (entity.Category, error)
 }
 
 type Service struct {
@@ -30,7 +31,7 @@ func (s Service) Handle(
 	pagination.SetDefaults()
 
 	if err := request.Validate(); err != nil {
-		return entity.Category{}, err
+		return entity.Category{}, errors.ErrRequestNotValid
 	}
 
 	category, err := s.repository.GetByTitle(ctx, request.Title)

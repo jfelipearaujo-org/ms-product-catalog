@@ -14,27 +14,27 @@ services:
     networks:
       - api-network
 
-  api:
-    depends_on:
-      - mongo_db
-    image: jsfelipearaujo/ms-product-catalog:latest
-    container_name: api
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 8080:8080
-    environment:
-      - API_PORT=8080
-      - API_ENV_NAME=development
-      - API_VERSION=v1
-      - DB_HOST=localhost
-      - DB_PORT=27017
-      - DB_NAME=product_db
-      - DB_USER=product
-      - DB_PASS=product
-    networks:
-      - api-network
+  # api:
+  #   depends_on:
+  #     - mongo_db
+  #   image: jsfelipearaujo/ms-product-catalog:latest
+  #   container_name: api
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 8080:8080
+  #   environment:
+  #     - API_PORT=8080
+  #     - API_ENV_NAME=development
+  #     - API_VERSION=v1
+  #     - DB_HOST=localhost
+  #     - DB_PORT=27017
+  #     - DB_NAME=product_db
+  #     - DB_USER=product
+  #     - DB_PASS=product
+  #   networks:
+  #     - api-network
 
   mongo_express:
     depends_on:
@@ -44,8 +44,9 @@ services:
     ports:
       - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: product
-      ME_CONFIG_MONGODB_ADMINPASSWORD: product
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: false
+      ME_CONFIG_MONGODB_AUTH_USERNAME: admin
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: pass
       ME_CONFIG_MONGODB_URL: mongodb://product:product@mongo_db:27017/
     networks:
       - api-network

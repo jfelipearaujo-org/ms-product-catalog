@@ -1,8 +1,8 @@
 package common
 
 type Pagination struct {
-	Page int64 `json:"page"`
-	Size int64 `json:"size"`
+	Page int64 `query:"page"`
+	Size int64 `query:"size"`
 }
 
 func (p *Pagination) SetDefaults() {

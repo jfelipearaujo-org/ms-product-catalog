@@ -1,9 +1,14 @@
 package get_category
 
-import "github.com/go-playground/validator/v10"
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
+)
 
 type GetCategoryDto struct {
-	Title string `json:"title" validate:"required,min=3,max=100"`
+	Title string `query:"title" validate:"required,min=3,max=100"`
+
+	common.Pagination
 }
 
 func (dto *GetCategoryDto) Validate() error {

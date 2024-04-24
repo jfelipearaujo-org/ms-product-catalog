@@ -49,7 +49,7 @@ func TestNewProductRepository(t *testing.T) {
 		}
 
 		// Act
-		resp := NewProductRepository(mt.DB)
+		resp := NewRepository(mt.DB)
 
 		// Assert
 		assert.IsType(mt, expected, resp)
@@ -61,7 +61,7 @@ func TestProductRepository_Create(t *testing.T) {
 
 	mt.Run("Should create a new product", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		mt.AddMockResponses(mtest.CreateSuccessResponse())
 
@@ -83,7 +83,7 @@ func TestProductRepository_Create(t *testing.T) {
 
 	mt.Run("Should return error when InsertOne fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		mt.AddMockResponses(mongoInvalidOperation)
 
@@ -106,7 +106,7 @@ func TestProductRepository_GetByID(t *testing.T) {
 
 	mt.Run("Should return error when nothing is found", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		mt.AddMockResponses(mtest.CreateCursorResponse(0,
 			"foo.bar",
@@ -127,7 +127,7 @@ func TestProductRepository_GetByTitle(t *testing.T) {
 
 	mt.Run("Should return error when nothing is found", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		mt.AddMockResponses(mtest.CreateCursorResponse(0,
 			"foo.bar",
@@ -148,7 +148,7 @@ func TestProductRepository_GetByCategoryID(t *testing.T) {
 
 	mt.Run("Should return a list of products paginated", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Second)
@@ -193,7 +193,7 @@ func TestProductRepository_GetByCategoryTitle(t *testing.T) {
 
 	mt.Run("Should return a list of products paginated", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Second)
@@ -238,7 +238,7 @@ func TestProductRepository_GetByAll(t *testing.T) {
 
 	mt.Run("Should return a list of products paginated", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Second)
@@ -283,7 +283,7 @@ func TestProductRepository_Update(t *testing.T) {
 
 	mt.Run("Should update a product", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Second)
@@ -306,7 +306,7 @@ func TestProductRepository_Update(t *testing.T) {
 
 	mt.Run("Should return error when Decode fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		now := time.Now().UTC().Truncate(time.Second)
 
@@ -325,7 +325,7 @@ func TestProductRepository_Update(t *testing.T) {
 
 	mt.Run("Should return error when Id is not found", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		now := time.Now().UTC().Truncate(time.Second)
 
@@ -349,7 +349,7 @@ func TestProductRepository_Delete(t *testing.T) {
 
 	mt.Run("Should delete a product", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -368,7 +368,7 @@ func TestProductRepository_Delete(t *testing.T) {
 
 	mt.Run("Should return error when DeleteOne fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -383,7 +383,7 @@ func TestProductRepository_Delete(t *testing.T) {
 
 	mt.Run("Should return error when nothing was deleted", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -406,7 +406,7 @@ func TestProductRepository_getOneByField(t *testing.T) {
 
 	mt.Run("Should return a product by ID", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Second)
@@ -442,7 +442,7 @@ func TestProductRepository_getOneByField(t *testing.T) {
 
 	mt.Run("Should return error when Decode fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -458,7 +458,7 @@ func TestProductRepository_getOneByField(t *testing.T) {
 
 	mt.Run("Should return error when nothing is found", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -481,7 +481,7 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return a list of products paginated", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Second)
@@ -522,7 +522,7 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error when CountDocuments fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -549,7 +549,7 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error when Find fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -582,7 +582,7 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error when Decode fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -620,7 +620,7 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error from Cursor", func(mt *mtest.T) {
 		// Arrange
-		repo := NewProductRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)

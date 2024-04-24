@@ -3,19 +3,33 @@ package health_handler
 import (
 	"net/http"
 
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/adapter/database"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/shared/health"
 	"github.com/labstack/echo/v4"
 )
 
-type Handler struct{}
+type Handler struct {
+	db database.DatabaseService
+}
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(db database.DatabaseService) *Handler {
+	return &Handler{
+		db: db,
+	}
 }
 
 func (h *Handler) Handle(ctx echo.Context) error {
-	data := map[string]string{
-		"database": "healthy",
+	dbStatus := h.db.Health()
+
+	data := map[string]*health.HealthStatus{
+		"database": dbStatus,
 	}
 
-	return ctx.JSON(http.StatusOK, data)
+	code := http.StatusOK
+
+	if dbStatus.HasError() {
+		code = http.StatusBadRequest
+	}
+
+	return ctx.JSON(code, data)
 }
