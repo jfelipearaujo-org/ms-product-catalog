@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	ErrNotFound        error = baseErrors.New("content not found")
-	ErrRequestNotValid error = baseErrors.New("request not valid, please check the fields")
+	ErrNotFound              error = baseErrors.New("content not found")
+	ErrRequestNotValid       error = baseErrors.New("request not valid, please check the fields")
+	ErrCategoryAlreadyExists error = baseErrors.New("category already exists")
 )
 
 type AppError struct {

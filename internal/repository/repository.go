@@ -11,7 +11,7 @@ type CategoryRepository interface {
 	Create(ctx context.Context, category *entity.Category) error
 	GetByID(ctx context.Context, id string) (entity.Category, error)
 	GetByTitle(ctx context.Context, title string) (entity.Category, error)
-	GetAll(ctx context.Context, filter common.Pagination) (int64, []entity.Category, error)
+	GetAll(ctx context.Context, pagination common.Pagination, filter GetAllCategoriesFilter) (int64, []entity.Category, error)
 	Update(ctx context.Context, category *entity.Category) error
 	Delete(ctx context.Context, id string) error
 }

@@ -19,7 +19,7 @@ func TestHandle(t *testing.T) {
 
 		id := uuid.NewString()
 
-		repository.On("GetByTitle", context.Background(), "title").
+		repository.On("GetByID", context.Background(), "title").
 			Return(entity.Category{
 				UUID:        id,
 				Title:       "title",
@@ -32,7 +32,7 @@ func TestHandle(t *testing.T) {
 		pagination := common.Pagination{}
 
 		req := GetCategoryDto{
-			Title: "title",
+			UUID: "title",
 		}
 
 		// Act
@@ -53,7 +53,7 @@ func TestHandle(t *testing.T) {
 		pagination := common.Pagination{}
 
 		req := GetCategoryDto{
-			Title: "",
+			UUID: "",
 		}
 
 		// Act
@@ -69,7 +69,7 @@ func TestHandle(t *testing.T) {
 		// Arrange
 		repository := mocks.NewMockCategoryRepository(t)
 
-		repository.On("GetByTitle", context.Background(), "title").
+		repository.On("GetByID", context.Background(), "title").
 			Return(entity.Category{}, errors.New("error")).
 			Once()
 
@@ -78,7 +78,7 @@ func TestHandle(t *testing.T) {
 		pagination := common.Pagination{}
 
 		req := GetCategoryDto{
-			Title: "title",
+			UUID: "title",
 		}
 
 		// Act

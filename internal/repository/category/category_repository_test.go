@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -189,7 +190,7 @@ func TestCategoryRepository_GetAll(t *testing.T) {
 		var expectedLength int = 1
 
 		// Act
-		count, resp, err := repo.GetAll(context.Background(), pagination)
+		count, resp, err := repo.GetAll(context.Background(), pagination, repository.GetAllCategoriesFilter{})
 
 		// Assert
 		assert.NoError(mt, err)

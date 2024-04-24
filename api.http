@@ -4,8 +4,12 @@
 GET {{host}}/health
 Content-Type: application/json
 
-### Get Category by (title)
-GET {{host}}/api/v1/categories?title=category
+### Get Categories
+GET {{host}}/api/v1/categories?page=1&size=100
+Content-Type: application/json
+
+### Get Category
+GET {{host}}/api/v1/categories/17e938c6-14c3-412f-bc87-446092d7c073
 Content-Type: application/json
 
 ### Create Category
@@ -16,3 +20,7 @@ Content-Type: application/json
     "title": "category",
     "description": "category description"
 }
+
+### Delete Category
+DELETE {{host}}/api/v1/categories/855dedf1-825e-44e0-afe4-25d6668d9a25
+Content-Type: application/json

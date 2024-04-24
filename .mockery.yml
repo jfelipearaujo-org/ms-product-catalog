@@ -35,6 +35,13 @@ packages:
           mockname: "Mock{{.InterfaceName}}"
           outpkg: "mocks"
           include-regex: "(Service)"
+    github.com/jfelipearaujo-org/ms-product-catalog/internal/service/category/get_categories:
+        config:
+          filename: "{{ .InterfaceName | snakecase }}_mock.go"
+          dir: "./internal/service/mocks"
+          mockname: "Mock{{.InterfaceName}}"
+          outpkg: "mocks"
+          include-regex: "(Service)"
     github.com/jfelipearaujo-org/ms-product-catalog/internal/service/category/create_category:
         config:
           filename: "{{ .InterfaceName | snakecase }}_mock.go"

@@ -1,4 +1,4 @@
-package get_category
+package get_categories
 
 import (
 	"math/rand"
@@ -22,7 +22,7 @@ func randomString(n int) string {
 func TestValidate(t *testing.T) {
 	t.Run("Should return nil when dto is valid", func(t *testing.T) {
 		// Arrange
-		dto := GetCategoryDto{
+		dto := GetCategoriesDto{
 			Title: "title",
 		}
 
@@ -35,7 +35,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("Should return error when title is empty", func(t *testing.T) {
 		// Arrange
-		dto := GetCategoryDto{
+		dto := GetCategoriesDto{
 			Title: "",
 		}
 
@@ -51,7 +51,7 @@ func TestValidate(t *testing.T) {
 		lengths := []int{1, 101}
 
 		for _, length := range lengths {
-			dto := GetCategoryDto{
+			dto := GetCategoriesDto{
 				Title: randomString(length),
 			}
 

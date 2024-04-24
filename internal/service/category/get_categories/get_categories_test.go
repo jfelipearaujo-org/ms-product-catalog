@@ -51,7 +51,7 @@ func TestHandle(t *testing.T) {
 		}
 
 		// Act
-		count, resp, err := service.Handle(context.Background(), common.Pagination{})
+		count, resp, err := service.Handle(context.Background(), common.Pagination{}, GetCategoriesDto{})
 
 		// Assert
 		assert.NoError(t, err)
@@ -83,7 +83,7 @@ func TestHandle(t *testing.T) {
 		}
 
 		// Act
-		count, resp, err := service.Handle(context.Background(), common.Pagination{})
+		count, resp, err := service.Handle(context.Background(), common.Pagination{}, GetCategoriesDto{})
 
 		// Assert
 		assert.Error(t, err)

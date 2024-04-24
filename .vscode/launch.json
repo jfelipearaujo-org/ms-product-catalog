@@ -10,7 +10,6 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/api/main.go",
-            "envFile": "${workspaceFolder}/.env",
             "logOutput": "dap",
             "showLog": false
         }
