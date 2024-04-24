@@ -22,7 +22,7 @@ func TestHandle(t *testing.T) {
 			repository,
 			timeProvider)
 
-		req := &CreateCategoryDto{
+		req := CreateCategoryDto{
 			Title:       "",
 			Description: "Description",
 		}
@@ -51,7 +51,7 @@ func TestHandle(t *testing.T) {
 			repository,
 			timeProvider)
 
-		req := &CreateCategoryDto{
+		req := CreateCategoryDto{
 			Title:       "Title",
 			Description: "Description",
 		}
@@ -80,7 +80,7 @@ func TestHandle(t *testing.T) {
 			repository,
 			timeProvider)
 
-		req := &CreateCategoryDto{
+		req := CreateCategoryDto{
 			Title:       "Title",
 			Description: "Description",
 		}

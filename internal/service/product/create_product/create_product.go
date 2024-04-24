@@ -10,7 +10,7 @@ import (
 )
 
 type CreateProduct interface {
-	Handle(ctx context.Context, request *CreateProductDto) error
+	Handle(ctx context.Context, request CreateProductDto) error
 }
 
 type Service struct {
@@ -31,7 +31,7 @@ func NewService(
 	}
 }
 
-func (s *Service) Handle(ctx context.Context, request *CreateProductDto) error {
+func (s *Service) Handle(ctx context.Context, request CreateProductDto) error {
 	if err := request.Validate(); err != nil {
 		return err
 	}

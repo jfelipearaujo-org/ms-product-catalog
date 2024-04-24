@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
-	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -153,7 +153,7 @@ func TestProductRepository_GetByCategoryID(t *testing.T) {
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Second)
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -198,7 +198,7 @@ func TestProductRepository_GetByCategoryTitle(t *testing.T) {
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Second)
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -243,7 +243,7 @@ func TestProductRepository_GetByAll(t *testing.T) {
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Second)
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -486,7 +486,7 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Second)
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -526,7 +526,7 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 
 		id := uuid.NewString()
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -553,7 +553,7 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 
 		id := uuid.NewString()
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -586,7 +586,7 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 
 		id := uuid.NewString()
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -625,7 +625,7 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}

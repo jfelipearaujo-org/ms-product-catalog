@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
-	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -49,7 +49,7 @@ func (repo *CategoryRepository) GetByTitle(ctx context.Context, title string) (e
 	return repo.getOneByField(ctx, "title", title)
 }
 
-func (repo *CategoryRepository) GetAll(ctx context.Context, pagination repository.Pagination) (int64, []entity.Category, error) {
+func (repo *CategoryRepository) GetAll(ctx context.Context, pagination common.Pagination) (int64, []entity.Category, error) {
 	return repo.getManyByFieldPaginated(ctx, bson.M{}, pagination)
 }
 
@@ -105,7 +105,7 @@ func (repo *CategoryRepository) getOneByField(ctx context.Context, field string,
 	return category, nil
 }
 
-func (repo *CategoryRepository) getManyByFieldPaginated(ctx context.Context, query primitive.M, pagination repository.Pagination) (int64, []entity.Category, error) {
+func (repo *CategoryRepository) getManyByFieldPaginated(ctx context.Context, query primitive.M, pagination common.Pagination) (int64, []entity.Category, error) {
 	var categories []entity.Category
 
 	countOpts := options.Count().SetHint("_id_")
