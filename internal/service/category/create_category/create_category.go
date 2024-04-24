@@ -10,7 +10,7 @@ import (
 )
 
 type CreateCategory interface {
-	Handle(ctx context.Context, request *CreateCategoryDto) error
+	Handle(ctx context.Context, request CreateCategoryDto) error
 }
 
 type Service struct {
@@ -28,7 +28,7 @@ func NewService(
 	}
 }
 
-func (s *Service) Handle(ctx context.Context, request *CreateCategoryDto) error {
+func (s *Service) Handle(ctx context.Context, request CreateCategoryDto) error {
 	if err := request.Validate(); err != nil {
 		return err
 	}

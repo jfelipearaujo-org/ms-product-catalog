@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
-	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -49,15 +50,15 @@ func (repo *ProductRepository) GetByTitle(ctx context.Context, title string) (en
 	return repo.getOneByField(ctx, "title", title)
 }
 
-func (repo *ProductRepository) GetByCategoryID(ctx context.Context, categoryId string, pagination repository.Pagination) (int64, []entity.Product, error) {
+func (repo *ProductRepository) GetByCategoryID(ctx context.Context, categoryId string, pagination common.Pagination) (int64, []entity.Product, error) {
 	return repo.getManyByFieldPaginated(ctx, bson.M{"category.uuid": categoryId}, pagination)
 }
 
-func (repo *ProductRepository) GetByCategoryTitle(ctx context.Context, categoryTitle string, pagination repository.Pagination) (int64, []entity.Product, error) {
+func (repo *ProductRepository) GetByCategoryTitle(ctx context.Context, categoryTitle string, pagination common.Pagination) (int64, []entity.Product, error) {
 	return repo.getManyByFieldPaginated(ctx, bson.M{"category.title": categoryTitle}, pagination)
 }
 
-func (repo *ProductRepository) GetAll(ctx context.Context, pagination repository.Pagination) (int64, []entity.Product, error) {
+func (repo *ProductRepository) GetAll(ctx context.Context, pagination common.Pagination) (int64, []entity.Product, error) {
 	return repo.getManyByFieldPaginated(ctx, bson.M{}, pagination)
 }
 
@@ -115,7 +116,7 @@ func (repo *ProductRepository) getOneByField(ctx context.Context, field string, 
 	return product, nil
 }
 
-func (repo *ProductRepository) getManyByFieldPaginated(ctx context.Context, query primitive.M, pagination repository.Pagination) (int64, []entity.Product, error) {
+func (repo *ProductRepository) getManyByFieldPaginated(ctx context.Context, query primitive.M, pagination common.Pagination) (int64, []entity.Product, error) {
 	var products []entity.Product
 
 	countOpts := options.Count().SetHint("_id_")

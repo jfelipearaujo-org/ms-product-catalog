@@ -25,7 +25,7 @@ func TestHandle(t *testing.T) {
 			categoryRepository,
 			timeProvider)
 
-		req := &CreateProductDto{
+		req := CreateProductDto{
 			Title:         "",
 			Description:   "Description",
 			Price:         10.0,
@@ -57,7 +57,7 @@ func TestHandle(t *testing.T) {
 			categoryRepository,
 			timeProvider)
 
-		req := &CreateProductDto{
+		req := CreateProductDto{
 			Title:         "Title",
 			Description:   "Description",
 			Price:         10.0,
@@ -95,7 +95,7 @@ func TestHandle(t *testing.T) {
 			categoryRepository,
 			timeProvider)
 
-		req := &CreateProductDto{
+		req := CreateProductDto{
 			Title:         "Title",
 			Description:   "Description",
 			Price:         10.0,
@@ -133,7 +133,7 @@ func TestHandle(t *testing.T) {
 			categoryRepository,
 			timeProvider)
 
-		req := &CreateProductDto{
+		req := CreateProductDto{
 			Title:         "Title",
 			Description:   "Description",
 			Price:         10.0,

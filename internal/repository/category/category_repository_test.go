@@ -10,8 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 
 	"github.com/google/uuid"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
-	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -164,7 +164,7 @@ func TestCategoryRepository_GetAll(t *testing.T) {
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -399,7 +399,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -439,7 +439,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 		id := uuid.NewString()
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -466,7 +466,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 		id := uuid.NewString()
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -499,7 +499,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 		id := uuid.NewString()
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
@@ -538,7 +538,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
 
-		pagination := repository.Pagination{
+		pagination := common.Pagination{
 			Page: 1,
 			Size: 1,
 		}
