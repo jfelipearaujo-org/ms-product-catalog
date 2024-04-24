@@ -42,7 +42,7 @@ func TestNewCategoryRepository(t *testing.T) {
 		}
 
 		// Act
-		resp := NewCategoryRepository(mt.DB)
+		resp := NewRepository(mt.DB)
 
 		// Assert
 		assert.IsType(mt, expected, resp)
@@ -54,7 +54,7 @@ func TestCategoryRepository_Create(t *testing.T) {
 
 	mt.Run("Should create a new category", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		mt.AddMockResponses(mtest.CreateSuccessResponse())
 
@@ -74,7 +74,7 @@ func TestCategoryRepository_Create(t *testing.T) {
 
 	mt.Run("Should return error when InsertOne fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		mt.AddMockResponses(mongoInvalidOperation)
 
@@ -95,7 +95,7 @@ func TestCategoryRepository_GetByID(t *testing.T) {
 
 	mt.Run("Should get a category by ID", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
@@ -127,7 +127,7 @@ func TestCategoryRepository_GetByTitle(t *testing.T) {
 
 	mt.Run("Should get a category by Title", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
@@ -159,7 +159,7 @@ func TestCategoryRepository_GetAll(t *testing.T) {
 
 	mt.Run("Should return a list of categories paginated", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
@@ -204,7 +204,7 @@ func TestCategoryRepository_Update(t *testing.T) {
 
 	mt.Run("Should update a category", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
@@ -231,7 +231,7 @@ func TestCategoryRepository_Update(t *testing.T) {
 
 	mt.Run("Should return error when Decode fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		now := time.Now().UTC().Truncate(time.Millisecond)
 
@@ -248,7 +248,7 @@ func TestCategoryRepository_Update(t *testing.T) {
 
 	mt.Run("Should return error when Id is not found", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		now := time.Now().UTC().Truncate(time.Millisecond)
 
@@ -270,7 +270,7 @@ func TestCategoryRepository_Delete(t *testing.T) {
 
 	mt.Run("Should delete a category", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -289,7 +289,7 @@ func TestCategoryRepository_Delete(t *testing.T) {
 
 	mt.Run("Should return error when DeleteOne fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -304,7 +304,7 @@ func TestCategoryRepository_Delete(t *testing.T) {
 
 	mt.Run("Should return error when nothing was deleted", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -327,7 +327,7 @@ func TestCategoryRepository_getOneByField(t *testing.T) {
 
 	mt.Run("Should get a category by ID", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
@@ -355,7 +355,7 @@ func TestCategoryRepository_getOneByField(t *testing.T) {
 
 	mt.Run("Should return error when Decode fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -371,7 +371,7 @@ func TestCategoryRepository_getOneByField(t *testing.T) {
 
 	mt.Run("Should return error when nothing is found", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -394,7 +394,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return a list of categories paginated", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)
@@ -435,7 +435,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error when CountDocuments fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -462,7 +462,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error when Find fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -495,7 +495,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error when Decode fails", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 
@@ -533,7 +533,7 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 
 	mt.Run("Should return error from Cursor", func(mt *mtest.T) {
 		// Arrange
-		repo := NewCategoryRepository(mt.DB)
+		repo := NewRepository(mt.DB)
 
 		id := uuid.NewString()
 		now := time.Now().UTC().Truncate(time.Millisecond)

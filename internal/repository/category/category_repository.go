@@ -24,7 +24,7 @@ type CategoryRepository struct {
 	collection *mongo.Collection
 }
 
-func NewCategoryRepository(db *mongo.Database) *CategoryRepository {
+func NewRepository(db *mongo.Database) *CategoryRepository {
 	return &CategoryRepository{
 		collection: db.Collection(CategoryCollection),
 	}

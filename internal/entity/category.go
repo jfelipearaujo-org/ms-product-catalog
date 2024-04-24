@@ -8,14 +8,14 @@ import (
 )
 
 type Category struct {
-	Id   primitive.ObjectID `bson:"_id,omitempty"`
-	UUID string             `bson:"uuid"`
+	Id   primitive.ObjectID `bson:"_id,omitempty" json:"-"`
+	UUID string             `bson:"uuid" json:"id"`
 
-	Title       string `bson:"title"`
-	Description string `bson:"description"`
+	Title       string `bson:"title" json:"title"`
+	Description string `bson:"description" json:"description"`
 
-	CreatedAt time.Time `bson:"created_at"`
-	UpdatedAt time.Time `bson:"updated_at"`
+	CreatedAt time.Time `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time `bson:"updated_at" json:"updated_at"`
 }
 
 func NewCategory(

@@ -25,7 +25,7 @@ type ProductRepository struct {
 	collection *mongo.Collection
 }
 
-func NewProductRepository(db *mongo.Database) *ProductRepository {
+func NewRepository(db *mongo.Database) *ProductRepository {
 	return &ProductRepository{
 		collection: db.Collection(ProductCollection),
 	}

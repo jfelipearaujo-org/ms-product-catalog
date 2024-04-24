@@ -69,22 +69,6 @@ run: ## Run the application
 	fi
 	@./build/main;
 
-run-docker: ## Run both app and database via Docker container
-	@if docker compose up 2>/dev/null; then \
-		: ; \
-	else \
-		echo "Falling back to Docker Compose V1"; \
-		docker-compose up -d; \
-	fi
-
-docker-down: ## Shutdown app and db container
-	@if docker compose down 2>/dev/null; then \
-		: ; \
-	else \
-		echo "Falling back to Docker Compose V1"; \
-		docker-compose down; \
-	fi
-
 ##@ Testing
 test: ## Test the application
 	@echo "Testing..."
@@ -122,12 +106,20 @@ env: ## Create the .env file based on example
 	@echo "Generating..."
 	@cp .env.example .env
 
-docker-up: ## Run the database and cache via Docker container
-	@if docker compose up 2>/dev/null; then \
-		: ; \
+docker-up: ## Run the containers
+	@if command -v docker compose > /dev/null; then \
+		docker compose up -d; \
 	else \
 		echo "Falling back to Docker Compose V1"; \
-		docker-compose up mongo_db mongo_express redis -d; \
+		docker-compose up -d; \
+	fi
+
+docker-down: ## Shutdown containers
+	@if command -v docker compose > /dev/null; then \
+		docker compose down; \
+	else \
+		echo "Falling back to Docker Compose V1"; \
+		docker-compose down; \
 	fi
 
 watch: ## Live reload using air
