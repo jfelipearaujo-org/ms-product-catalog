@@ -4,6 +4,15 @@
 GET {{host}}/health
 Content-Type: application/json
 
-### Categories
+### Get Category by (title)
 GET {{host}}/api/v1/categories?title=category
 Content-Type: application/json
+
+### Create Category
+POST {{host}}/api/v1/categories
+Content-Type: application/json
+
+{
+    "title": "category",
+    "description": "category description"
+}

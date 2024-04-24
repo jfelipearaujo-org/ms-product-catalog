@@ -28,10 +28,11 @@ func TestHandle(t *testing.T) {
 		}
 
 		// Act
-		err := service.Handle(context.Background(), req)
+		category, err := service.Handle(context.Background(), req)
 
 		// Assert
 		assert.Error(t, err)
+		assert.Nil(t, category)
 		repository.AssertExpectations(t)
 		timeProvider.AssertExpectations(t)
 	})
@@ -57,10 +58,11 @@ func TestHandle(t *testing.T) {
 		}
 
 		// Act
-		err := service.Handle(context.Background(), req)
+		category, err := service.Handle(context.Background(), req)
 
 		// Assert
 		assert.Error(t, err)
+		assert.Nil(t, category)
 		repository.AssertExpectations(t)
 		timeProvider.AssertExpectations(t)
 	})
@@ -86,10 +88,11 @@ func TestHandle(t *testing.T) {
 		}
 
 		// Act
-		err := service.Handle(context.Background(), req)
+		category, err := service.Handle(context.Background(), req)
 
 		// Assert
 		assert.NoError(t, err)
+		assert.NotNil(t, category)
 		repository.AssertExpectations(t)
 		timeProvider.AssertExpectations(t)
 	})

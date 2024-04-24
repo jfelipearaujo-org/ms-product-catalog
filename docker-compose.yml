@@ -47,6 +47,8 @@ services:
       ME_CONFIG_MONGODB_ENABLE_ADMIN: false
       ME_CONFIG_MONGODB_AUTH_USERNAME: admin
       ME_CONFIG_MONGODB_AUTH_PASSWORD: pass
+      ME_CONFIG_MONGODB_ADMINUSERNAME: product
+      ME_CONFIG_MONGODB_ADMINPASSWORD: product
       ME_CONFIG_MONGODB_URL: mongodb://product:product@mongo_db:27017/
     networks:
       - api-network
