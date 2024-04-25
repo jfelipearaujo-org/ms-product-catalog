@@ -8,8 +8,8 @@ import (
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 )
 
-type GetCategories interface {
-	Handle(ctx context.Context, pagination common.Pagination) (int64, []entity.Category, error)
+type GetCategoriesService interface {
+	Handle(ctx context.Context, pagination common.Pagination, request GetCategoriesDto) (int64, []entity.Category, error)
 }
 
 type Service struct {
@@ -22,10 +22,16 @@ func NewService(repository repository.CategoryRepository) *Service {
 	}
 }
 
-func (s Service) Handle(ctx context.Context, pagination common.Pagination) (int64, []entity.Category, error) {
+func (s Service) Handle(
+	ctx context.Context,
+	pagination common.Pagination,
+	request GetCategoriesDto,
+) (int64, []entity.Category, error) {
 	pagination.SetDefaults()
 
-	count, categories, err := s.repository.GetAll(ctx, pagination)
+	count, categories, err := s.repository.GetAll(ctx, pagination, repository.GetAllCategoriesFilter{
+		Title: request.Title,
+	})
 	if err != nil {
 		return 0, categories, err
 	}

@@ -9,8 +9,8 @@ import (
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 )
 
-type CreateCategory interface {
-	Handle(ctx context.Context, request CreateCategoryDto) error
+type CreateCategoryService interface {
+	Handle(ctx context.Context, request CreateCategoryDto) (*entity.Category, error)
 }
 
 type Service struct {
@@ -28,9 +28,9 @@ func NewService(
 	}
 }
 
-func (s *Service) Handle(ctx context.Context, request CreateCategoryDto) error {
+func (s *Service) Handle(ctx context.Context, request CreateCategoryDto) (*entity.Category, error) {
 	if err := request.Validate(); err != nil {
-		return err
+		return nil, err
 	}
 
 	category := entity.NewCategory(
@@ -39,8 +39,8 @@ func (s *Service) Handle(ctx context.Context, request CreateCategoryDto) error {
 		s.timeProvider.GetTime())
 
 	if err := s.repository.Create(ctx, category); err != nil {
-		return fmt.Errorf("error to create the category: %w", err)
+		return nil, fmt.Errorf("error to create the category: %w", err)
 	}
 
-	return nil
+	return category, nil
 }

@@ -1,17 +1,14 @@
-package get_category
+package delete_category
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 )
 
-type GetCategoryDto struct {
+type DeleteCategoryDto struct {
 	UUID string `param:"id" validate:"required,uuid4"`
-
-	common.Pagination
 }
 
-func (dto *GetCategoryDto) Validate() error {
+func (dto *DeleteCategoryDto) Validate() error {
 	validator := validator.New()
 
 	if err := validator.Struct(dto); err != nil {

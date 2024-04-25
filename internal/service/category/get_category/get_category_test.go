@@ -10,6 +10,7 @@ import (
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestHandle(t *testing.T) {
@@ -19,7 +20,7 @@ func TestHandle(t *testing.T) {
 
 		id := uuid.NewString()
 
-		repository.On("GetByTitle", context.Background(), "title").
+		repository.On("GetByID", mock.Anything, mock.Anything).
 			Return(entity.Category{
 				UUID:        id,
 				Title:       "title",
@@ -32,7 +33,7 @@ func TestHandle(t *testing.T) {
 		pagination := common.Pagination{}
 
 		req := GetCategoryDto{
-			Title: "title",
+			UUID: id,
 		}
 
 		// Act
@@ -53,7 +54,7 @@ func TestHandle(t *testing.T) {
 		pagination := common.Pagination{}
 
 		req := GetCategoryDto{
-			Title: "",
+			UUID: "",
 		}
 
 		// Act
@@ -69,7 +70,9 @@ func TestHandle(t *testing.T) {
 		// Arrange
 		repository := mocks.NewMockCategoryRepository(t)
 
-		repository.On("GetByTitle", context.Background(), "title").
+		id := uuid.NewString()
+
+		repository.On("GetByID", mock.Anything, mock.Anything).
 			Return(entity.Category{}, errors.New("error")).
 			Once()
 
@@ -78,7 +81,7 @@ func TestHandle(t *testing.T) {
 		pagination := common.Pagination{}
 
 		req := GetCategoryDto{
-			Title: "title",
+			UUID: id,
 		}
 
 		// Act

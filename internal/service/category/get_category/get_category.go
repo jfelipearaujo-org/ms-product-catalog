@@ -34,7 +34,7 @@ func (s Service) Handle(
 		return entity.Category{}, errors.ErrRequestNotValid
 	}
 
-	category, err := s.repository.GetByTitle(ctx, request.Title)
+	category, err := s.repository.GetByID(ctx, request.UUID)
 	if err != nil {
 		return category, err
 	}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -49,8 +50,22 @@ func (repo *CategoryRepository) GetByTitle(ctx context.Context, title string) (e
 	return repo.getOneByField(ctx, "title", title)
 }
 
-func (repo *CategoryRepository) GetAll(ctx context.Context, pagination common.Pagination) (int64, []entity.Category, error) {
-	return repo.getManyByFieldPaginated(ctx, bson.M{}, pagination)
+func (repo *CategoryRepository) GetAll(ctx context.Context, pagination common.Pagination, filter repository.GetAllCategoriesFilter) (int64, []entity.Category, error) {
+	filters := []bson.M{}
+
+	if filter.Title != "" {
+		filters = append(filters, bson.M{"title": filter.Title})
+	}
+
+	var query interface{}
+
+	if len(filters) > 0 {
+		query = bson.M{"$and": filters}
+	} else {
+		query = bson.M{}
+	}
+
+	return repo.getManyByFieldPaginated(ctx, query, pagination)
 }
 
 func (repo *CategoryRepository) Update(ctx context.Context, category *entity.Category) error {
@@ -105,11 +120,11 @@ func (repo *CategoryRepository) getOneByField(ctx context.Context, field string,
 	return category, nil
 }
 
-func (repo *CategoryRepository) getManyByFieldPaginated(ctx context.Context, query primitive.M, pagination common.Pagination) (int64, []entity.Category, error) {
+func (repo *CategoryRepository) getManyByFieldPaginated(ctx context.Context, query interface{}, pagination common.Pagination) (int64, []entity.Category, error) {
 	var categories []entity.Category
 
 	countOpts := options.Count().SetHint("_id_")
-	count, err := repo.collection.CountDocuments(ctx, bson.M{}, countOpts)
+	count, err := repo.collection.CountDocuments(ctx, query, countOpts)
 	if err != nil {
 		return 0, categories, err
 	}
