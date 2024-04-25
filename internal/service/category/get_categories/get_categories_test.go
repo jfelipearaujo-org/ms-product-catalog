@@ -10,6 +10,7 @@ import (
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestHandle(t *testing.T) {
@@ -19,13 +20,7 @@ func TestHandle(t *testing.T) {
 
 		id := uuid.NewString()
 
-		repository.On("GetAll",
-			context.Background(),
-			common.Pagination{
-				Page: 0,
-				Size: 10,
-			},
-		).
+		repository.On("GetAll", mock.Anything, mock.Anything, mock.Anything).
 			Return(int64(1), []entity.Category{
 				{
 					UUID:        id,
@@ -64,13 +59,7 @@ func TestHandle(t *testing.T) {
 		// Arrange
 		repository := mocks.NewMockCategoryRepository(t)
 
-		repository.On("GetAll",
-			context.Background(),
-			common.Pagination{
-				Page: 0,
-				Size: 10,
-			},
-		).Return(int64(0), []entity.Category{}, errors.New("error")).Once()
+		repository.On("GetAll", mock.Anything, mock.Anything, mock.Anything).Return(int64(0), []entity.Category{}, errors.New("error")).Once()
 
 		service := NewService(repository)
 

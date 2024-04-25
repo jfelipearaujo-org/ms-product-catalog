@@ -18,7 +18,7 @@ func TestSetDefaults(t *testing.T) {
 			Page int64
 			Size int64
 		}{
-			Page: 0,
+			Page: 1,
 			Size: 10,
 		}
 
@@ -41,7 +41,7 @@ func TestSetDefaults(t *testing.T) {
 			Page int64
 			Size int64
 		}{
-			Page: 0,
+			Page: 1,
 			Size: 10,
 		}
 
@@ -73,7 +73,7 @@ func TestSetDefaults(t *testing.T) {
 				Page int64
 				Size int64
 			}{
-				Page: 0,
+				Page: 1,
 				Size: tt.expected,
 			}
 

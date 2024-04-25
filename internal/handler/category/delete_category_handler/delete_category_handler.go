@@ -32,11 +32,11 @@ func (h *Handler) Handle(ctx echo.Context) error {
 
 	err := h.deleteCategoryService.Handle(context, req)
 	if err != nil {
-		if err == repository.ErrCategoryNotFound {
-			return errors.NewHttpAppError(http.StatusNotFound, "error to find the category", err)
-		}
 		if err == errors.ErrRequestNotValid {
 			return errors.NewHttpAppError(http.StatusUnprocessableEntity, "validation error", err)
+		}
+		if err == repository.ErrCategoryNotFound {
+			return errors.NewHttpAppError(http.StatusNotFound, "error to find the category", err)
 		}
 
 		return errors.NewHttpAppError(http.StatusInternalServerError, "internal server error", err)
