@@ -22,11 +22,11 @@ func NewHandler(service get_products.GetProductsService) *Handler {
 func (h *Handler) Handle(ctx echo.Context) error {
 	req := get_products.GetProductsDto{}
 
+	req.SetDefaults()
+
 	if err := ctx.Bind(&req); err != nil {
 		return errors.NewHttpAppError(http.StatusBadRequest, "invalid request", err)
 	}
-
-	req.SetDefaults()
 
 	context := ctx.Request().Context()
 

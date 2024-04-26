@@ -29,6 +29,10 @@ func (s Service) Handle(
 ) (int64, []entity.Category, error) {
 	pagination.SetDefaults()
 
+	if err := request.Validate(); err != nil {
+		return 0, []entity.Category{}, err
+	}
+
 	count, categories, err := s.repository.GetAll(ctx, pagination, repository.GetAllCategoriesFilter{
 		Title: request.Title,
 	})

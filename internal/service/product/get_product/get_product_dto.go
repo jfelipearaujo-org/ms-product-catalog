@@ -6,7 +6,7 @@ import (
 )
 
 type GetProductDto struct {
-	UUID string `param:"id"`
+	UUID string `param:"id" validate:"required,uuid4"`
 }
 
 func (r GetProductDto) Validate() error {

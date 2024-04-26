@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository/mocks"
 	"github.com/stretchr/testify/assert"
@@ -30,14 +29,12 @@ func TestHandle(t *testing.T) {
 
 		service := NewService(repository)
 
-		pagination := common.Pagination{}
-
 		req := GetCategoryDto{
 			UUID: id,
 		}
 
 		// Act
-		resp, err := service.Handle(context.Background(), pagination, req)
+		resp, err := service.Handle(context.Background(), req)
 
 		// Assert
 		assert.NoError(t, err)
@@ -51,14 +48,12 @@ func TestHandle(t *testing.T) {
 
 		service := NewService(repository)
 
-		pagination := common.Pagination{}
-
 		req := GetCategoryDto{
 			UUID: "",
 		}
 
 		// Act
-		resp, err := service.Handle(context.Background(), pagination, req)
+		resp, err := service.Handle(context.Background(), req)
 
 		// Assert
 		assert.Error(t, err)
@@ -78,14 +73,12 @@ func TestHandle(t *testing.T) {
 
 		service := NewService(repository)
 
-		pagination := common.Pagination{}
-
 		req := GetCategoryDto{
 			UUID: id,
 		}
 
 		// Act
-		resp, err := service.Handle(context.Background(), pagination, req)
+		resp, err := service.Handle(context.Background(), req)
 
 		// Assert
 		assert.Error(t, err)

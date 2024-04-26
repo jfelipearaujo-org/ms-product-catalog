@@ -2,7 +2,6 @@ package create_category
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/provider"
@@ -39,7 +38,7 @@ func (s *Service) Handle(ctx context.Context, request CreateCategoryDto) (*entit
 		s.timeProvider.GetTime())
 
 	if err := s.repository.Create(ctx, category); err != nil {
-		return nil, fmt.Errorf("error to create the category: %w", err)
+		return nil, err
 	}
 
 	return category, nil

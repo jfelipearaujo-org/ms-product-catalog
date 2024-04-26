@@ -28,7 +28,7 @@ func (h *Handler) Handle(ctx echo.Context) error {
 
 	context := ctx.Request().Context()
 
-	category, err := h.service.Handle(context, req.Pagination, req)
+	category, err := h.service.Handle(context, req)
 	if err != nil {
 		if err == repository.ErrCategoryNotFound {
 			return errors.NewHttpAppError(http.StatusNotFound, "error to find the category", err)
