@@ -15,11 +15,8 @@ func cleanEnv() {
 	os.Unsetenv("API_ENV_NAME")
 	os.Unsetenv("API_VERSION")
 
-	os.Unsetenv("DB_HOST")
-	os.Unsetenv("DB_PORT")
 	os.Unsetenv("DB_NAME")
-	os.Unsetenv("DB_USER")
-	os.Unsetenv("DB_PASS")
+	os.Unsetenv("DB_URL")
 }
 
 func TestGetEnvironment(t *testing.T) {
@@ -29,11 +26,8 @@ func TestGetEnvironment(t *testing.T) {
 		t.Setenv("API_ENV_NAME", "development")
 		t.Setenv("API_VERSION", "v1")
 
-		t.Setenv("DB_HOST", "localhost")
-		t.Setenv("DB_PORT", "5432")
 		t.Setenv("DB_NAME", "test")
-		t.Setenv("DB_USER", "user_test")
-		t.Setenv("DB_PASS", "pass_test")
+		t.Setenv("DB_URL", "db://host:1234")
 
 		expected := &environment.Config{
 			ApiConfig: &environment.ApiConfig{
@@ -42,11 +36,8 @@ func TestGetEnvironment(t *testing.T) {
 				ApiVersion: "v1",
 			},
 			DbConfig: &environment.DatabaseConfig{
-				Host:     "localhost",
-				Port:     5432,
-				DbName:   "test",
-				User:     "user_test",
-				Password: "pass_test",
+				DbName: "test",
+				Url:    "db://host:1234",
 			},
 		}
 
@@ -65,10 +56,7 @@ func TestGetEnvironment(t *testing.T) {
 		t.Setenv("API_ENV_NAME", "development")
 		t.Setenv("API_VERSION", "v1")
 
-		t.Setenv("DB_PORT", "5432")
 		t.Setenv("DB_NAME", "test")
-		t.Setenv("DB_USER", "user_test")
-		t.Setenv("DB_PASS", "pass_test")
 
 		// Act
 		env, err := NewLoader().GetEnvironment(context.Background())
@@ -91,11 +79,8 @@ func TestGetEnvironmentFromFile(t *testing.T) {
 				ApiVersion: "v1",
 			},
 			DbConfig: &environment.DatabaseConfig{
-				Host:     "localhost",
-				Port:     27017,
-				DbName:   "product_db",
-				User:     "product",
-				Password: "product",
+				DbName: "test",
+				Url:    "db://host:1234",
 			},
 		}
 

@@ -11,7 +11,10 @@
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/api/main.go",
             "logOutput": "dap",
-            "showLog": false
+            "showLog": false,
+            "args": [
+                "local"
+            ]
         }
     ]
 }

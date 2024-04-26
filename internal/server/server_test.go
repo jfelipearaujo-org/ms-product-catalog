@@ -15,11 +15,8 @@ func TestNewServer(t *testing.T) {
 				Port: 8080,
 			},
 			DbConfig: &environment.DatabaseConfig{
-				DbName:   "db",
-				Host:     "localhost",
-				Port:     1234,
-				User:     "user",
-				Password: "pass",
+				DbName: "db",
+				Url:    "db://host:1234",
 			},
 		}
 

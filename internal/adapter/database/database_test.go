@@ -15,11 +15,8 @@ func TestGetInstance(t *testing.T) {
 		// Arrange
 		config := &environment.Config{
 			DbConfig: &environment.DatabaseConfig{
-				DbName:   "db",
-				Host:     "localhost",
-				Port:     1234,
-				User:     "user",
-				Password: "pass",
+				DbName: "db",
+				Url:    "mongodb://host:1234",
 			},
 		}
 
@@ -43,11 +40,8 @@ func TestHealth(t *testing.T) {
 		// Arrange
 		config := &environment.Config{
 			DbConfig: &environment.DatabaseConfig{
-				DbName:   "db",
-				Host:     "localhost",
-				Port:     1234,
-				User:     "user",
-				Password: "pass",
+				DbName: "db",
+				Url:    "mongodb://host:1234",
 			},
 		}
 
@@ -68,11 +62,8 @@ func TestHealth(t *testing.T) {
 		// Arrange
 		config := &environment.Config{
 			DbConfig: &environment.DatabaseConfig{
-				DbName:   "db",
-				Host:     "localhost",
-				Port:     1234,
-				User:     "user",
-				Password: "pass",
+				DbName: "db",
+				Url:    "mongodb://host:1234",
 			},
 		}
 

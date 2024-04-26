@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"time"
 
@@ -23,13 +22,7 @@ type Service struct {
 }
 
 func NewDatabase(config *environment.Config) DatabaseService {
-	dbAddr := fmt.Sprintf("mongodb://%s:%s@%s:%d/?maxPoolSize=50",
-		config.DbConfig.User,
-		config.DbConfig.Password,
-		config.DbConfig.Host,
-		config.DbConfig.Port)
-
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(dbAddr))
+	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(config.DbConfig.Url))
 	if err != nil {
 		slog.Error("error connecting to database", "error", err)
 		panic(err)

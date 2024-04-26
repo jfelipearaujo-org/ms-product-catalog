@@ -11,11 +11,8 @@ type ApiConfig struct {
 }
 
 type DatabaseConfig struct {
-	Host     string `env:"HOST, required"`
-	Port     int    `env:"PORT, required"`
-	DbName   string `env:"NAME, required"`
-	User     string `env:"USER, required"`
-	Password string `env:"PASS, required"`
+	DbName string `env:"NAME, required"`
+	Url    string `env:"URL, required"`
 }
 
 type Config struct {
