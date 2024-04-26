@@ -1,4 +1,4 @@
-package delete_category_handler
+package delete_product_handler
 
 import (
 	baseErr "errors"
@@ -14,16 +14,16 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestHandle(t *testing.T) {
-	t.Run("Should delete the category", func(t *testing.T) {
+func TestHandler(t *testing.T) {
+	t.Run("Should delete the product", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockDeleteCategoryService(t)
+		service := mocks.NewMockDeleteProductService(t)
 
 		service.On("Handle", mock.Anything, mock.Anything).
 			Return(nil).
 			Once()
 
-		req := httptest.NewRequest(echo.DELETE, "/categories", nil)
+		req := httptest.NewRequest(echo.DELETE, "/products", nil)
 		req.Header.Set("Content-Type", "application/json")
 
 		resp := httptest.NewRecorder()
@@ -47,13 +47,13 @@ func TestHandle(t *testing.T) {
 
 	t.Run("Should return error when request is invalid", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockDeleteCategoryService(t)
+		service := mocks.NewMockDeleteProductService(t)
 
 		service.On("Handle", mock.Anything, mock.Anything).
 			Return(errors.ErrRequestNotValid).
 			Once()
 
-		req := httptest.NewRequest(echo.DELETE, "/categories", nil)
+		req := httptest.NewRequest(echo.DELETE, "/products", nil)
 		req.Header.Set("Content-Type", "application/json")
 
 		resp := httptest.NewRecorder()
@@ -83,15 +83,15 @@ func TestHandle(t *testing.T) {
 		service.AssertExpectations(t)
 	})
 
-	t.Run("Should return error when category not found", func(t *testing.T) {
+	t.Run("Should return error when product does not exist", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockDeleteCategoryService(t)
+		service := mocks.NewMockDeleteProductService(t)
 
 		service.On("Handle", mock.Anything, mock.Anything).
-			Return(repository.ErrCategoryNotFound).
+			Return(repository.ErrProductNotFound).
 			Once()
 
-		req := httptest.NewRequest(echo.DELETE, "/categories", nil)
+		req := httptest.NewRequest(echo.DELETE, "/products", nil)
 		req.Header.Set("Content-Type", "application/json")
 
 		resp := httptest.NewRecorder()
@@ -115,21 +115,21 @@ func TestHandle(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, he.Code)
 		assert.Equal(t, errors.AppError{
 			Code:    http.StatusNotFound,
-			Message: "error to find the category",
-			Details: "category not found",
+			Message: "error to find the product",
+			Details: "product not found",
 		}, he.Message)
 		service.AssertExpectations(t)
 	})
 
-	t.Run("Should return error when internal server error", func(t *testing.T) {
+	t.Run("Should return error when product cannot be deleted", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockDeleteCategoryService(t)
+		service := mocks.NewMockDeleteProductService(t)
 
 		service.On("Handle", mock.Anything, mock.Anything).
 			Return(baseErr.New("error")).
 			Once()
 
-		req := httptest.NewRequest(echo.DELETE, "/categories", nil)
+		req := httptest.NewRequest(echo.DELETE, "/products", nil)
 		req.Header.Set("Content-Type", "application/json")
 
 		resp := httptest.NewRecorder()

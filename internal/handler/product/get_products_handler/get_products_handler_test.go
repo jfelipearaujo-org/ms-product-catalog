@@ -1,4 +1,4 @@
-package get_category_handler
+package get_products_handler
 
 import (
 	baseErr "errors"
@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
-	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/service/mocks"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/shared/errors"
 	"github.com/labstack/echo/v4"
@@ -16,15 +15,21 @@ import (
 )
 
 func TestHandle(t *testing.T) {
-	t.Run("Should return the category", func(t *testing.T) {
+	t.Run("Should return the products", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockGetCategoryService(t)
+		service := mocks.NewMockGetProductsService(t)
 
 		service.On("Handle", mock.Anything, mock.Anything, mock.Anything).
-			Return(entity.Category{}, nil).
+			Return(int64(1), []entity.Product{
+				{
+					UUID:        "123",
+					Title:       "Product",
+					Description: "Product description",
+				},
+			}, nil).
 			Once()
 
-		req := httptest.NewRequest(echo.GET, "/categories", nil)
+		req := httptest.NewRequest(echo.GET, "/products", nil)
 		resp := httptest.NewRecorder()
 
 		echo := echo.New()
@@ -38,19 +43,19 @@ func TestHandle(t *testing.T) {
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, resp.Code)
-		assert.JSONEq(t, `{"id":"", "title":"", "description":"", "created_at":"0001-01-01T00:00:00Z", "updated_at":"0001-01-01T00:00:00Z"}`, resp.Body.String())
+		assert.JSONEq(t, `{ "page":1, "total_items":1, "total_pages":1, "data":[{"id":"123", "title":"Product", "description":"Product description", "price": 0, "created_at":"0001-01-01T00:00:00Z", "updated_at":"0001-01-01T00:00:00Z", "category": {"id":"", "title":"", "description":"", "created_at":"0001-01-01T00:00:00Z", "updated_at":"0001-01-01T00:00:00Z"}}]}`, resp.Body.String())
 		service.AssertExpectations(t)
 	})
 
 	t.Run("Should return validation error", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockGetCategoryService(t)
+		service := mocks.NewMockGetProductsService(t)
 
 		service.On("Handle", mock.Anything, mock.Anything, mock.Anything).
-			Return(entity.Category{}, errors.ErrRequestNotValid).
+			Return(int64(1), []entity.Product{}, errors.ErrRequestNotValid).
 			Once()
 
-		req := httptest.NewRequest(echo.GET, "/categories", nil)
+		req := httptest.NewRequest(echo.GET, "/products", nil)
 		resp := httptest.NewRecorder()
 
 		e := echo.New()
@@ -76,51 +81,15 @@ func TestHandle(t *testing.T) {
 		service.AssertExpectations(t)
 	})
 
-	t.Run("Should return error when the category is not found", func(t *testing.T) {
-		// Arrange
-		service := mocks.NewMockGetCategoryService(t)
-
-		service.On("Handle", mock.Anything, mock.Anything, mock.Anything).
-			Return(entity.Category{}, repository.ErrCategoryNotFound).
-			Once()
-
-		req := httptest.NewRequest(echo.GET, "/categories", nil)
-		req.Header.Set("Content-Type", "application/json")
-
-		resp := httptest.NewRecorder()
-
-		e := echo.New()
-		ctx := e.NewContext(req, resp)
-
-		handler := NewHandler(service)
-
-		// Act
-		err := handler.Handle(ctx)
-
-		// Assert
-		assert.Error(t, err)
-
-		he, ok := err.(*echo.HTTPError)
-		assert.True(t, ok)
-
-		assert.Equal(t, http.StatusNotFound, he.Code)
-		assert.Equal(t, errors.AppError{
-			Code:    http.StatusNotFound,
-			Message: "error to find the category",
-			Details: "category not found",
-		}, he.Message)
-		service.AssertExpectations(t)
-	})
-
 	t.Run("Should return internal server error", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockGetCategoryService(t)
+		service := mocks.NewMockGetProductsService(t)
 
 		service.On("Handle", mock.Anything, mock.Anything, mock.Anything).
-			Return(entity.Category{}, baseErr.New("error")).
+			Return(int64(1), []entity.Product{}, baseErr.New("error")).
 			Once()
 
-		req := httptest.NewRequest(echo.GET, "/categories", nil)
+		req := httptest.NewRequest(echo.GET, "/products", nil)
 		resp := httptest.NewRecorder()
 
 		e := echo.New()

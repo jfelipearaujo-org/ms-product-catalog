@@ -56,3 +56,31 @@ packages:
           mockname: "Mock{{.InterfaceName}}"
           outpkg: "mocks"
           include-regex: "(Service)"
+    github.com/jfelipearaujo-org/ms-product-catalog/internal/service/product/create_product:
+        config:
+          filename: "{{ .InterfaceName | snakecase }}_mock.go"
+          dir: "./internal/service/mocks"
+          mockname: "Mock{{.InterfaceName}}"
+          outpkg: "mocks"
+          include-regex: "(Service)"
+    github.com/jfelipearaujo-org/ms-product-catalog/internal/service/product/get_product:
+        config:
+          filename: "{{ .InterfaceName | snakecase }}_mock.go"
+          dir: "./internal/service/mocks"
+          mockname: "Mock{{.InterfaceName}}"
+          outpkg: "mocks"
+          include-regex: "(Service)"
+    github.com/jfelipearaujo-org/ms-product-catalog/internal/service/product/get_products:
+        config:
+          filename: "{{ .InterfaceName | snakecase }}_mock.go"
+          dir: "./internal/service/mocks"
+          mockname: "Mock{{.InterfaceName}}"
+          outpkg: "mocks"
+          include-regex: "(Service)"
+    github.com/jfelipearaujo-org/ms-product-catalog/internal/service/product/delete_product:
+        config:
+          filename: "{{ .InterfaceName | snakecase }}_mock.go"
+          dir: "./internal/service/mocks"
+          mockname: "Mock{{.InterfaceName}}"
+          outpkg: "mocks"
+          include-regex: "(Service)"

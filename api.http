@@ -4,8 +4,8 @@
 GET {{host}}/health
 Content-Type: application/json
 
-### Get Categories
-GET {{host}}/api/v1/categories?page=1&size=100
+### Get Categories  (title, page, size)
+GET {{host}}/api/v1/categories?page=1&size=100&title=category
 Content-Type: application/json
 
 ### Get Category
@@ -23,4 +23,27 @@ Content-Type: application/json
 
 ### Delete Category
 DELETE {{host}}/api/v1/categories/855dedf1-825e-44e0-afe4-25d6668d9a25
+Content-Type: application/json
+
+### Create Product
+POST {{host}}/api/v1/products
+Content-Type: application/json
+
+{
+    "title": "product",
+    "description": "product description",
+    "price": 100,
+    "category_title": "category"
+}
+
+### Get Products (title, category, page, size)
+GET {{host}}/api/v1/products?page=1&size=100
+Content-Type: application/json
+
+### Get Product
+GET {{host}}/api/v1/products/66c9e1a4-923c-4c17-81c9-f016f93982c0
+Content-Type: application/json
+
+### Delete Product
+DELETE {{host}}/api/v1/products/dc4c5841-6646-4a85-b9c1-3a9df1b39669
 Content-Type: application/json

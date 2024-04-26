@@ -33,10 +33,11 @@ func TestHandle(t *testing.T) {
 		}
 
 		// Act
-		err := service.Handle(context.Background(), req)
+		resp, err := service.Handle(context.Background(), req)
 
 		// Assert
 		assert.Error(t, err)
+		assert.Nil(t, resp)
 		productRepository.AssertExpectations(t)
 		categoryRepository.AssertExpectations(t)
 		timeProvider.AssertExpectations(t)
@@ -65,10 +66,11 @@ func TestHandle(t *testing.T) {
 		}
 
 		// Act
-		err := service.Handle(context.Background(), req)
+		resp, err := service.Handle(context.Background(), req)
 
 		// Assert
 		assert.Error(t, err)
+		assert.Nil(t, resp)
 		productRepository.AssertExpectations(t)
 		categoryRepository.AssertExpectations(t)
 		timeProvider.AssertExpectations(t)
@@ -103,10 +105,11 @@ func TestHandle(t *testing.T) {
 		}
 
 		// Act
-		err := service.Handle(context.Background(), req)
+		resp, err := service.Handle(context.Background(), req)
 
 		// Assert
 		assert.Error(t, err)
+		assert.Nil(t, resp)
 		productRepository.AssertExpectations(t)
 		categoryRepository.AssertExpectations(t)
 		timeProvider.AssertExpectations(t)
@@ -141,10 +144,11 @@ func TestHandle(t *testing.T) {
 		}
 
 		// Act
-		err := service.Handle(context.Background(), req)
+		resp, err := service.Handle(context.Background(), req)
 
 		// Assert
 		assert.NoError(t, err)
+		assert.NotNil(t, resp)
 		productRepository.AssertExpectations(t)
 		categoryRepository.AssertExpectations(t)
 		timeProvider.AssertExpectations(t)

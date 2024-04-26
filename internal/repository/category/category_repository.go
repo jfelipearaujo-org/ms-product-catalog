@@ -17,10 +17,6 @@ const (
 	CategoryCollection = "category"
 )
 
-var (
-	ErrCategoryNotFound = errors.New("category not found")
-)
-
 type CategoryRepository struct {
 	collection *mongo.Collection
 }
@@ -81,7 +77,7 @@ func (repo *CategoryRepository) Update(ctx context.Context, category *entity.Cat
 		query,
 		options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(category); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return ErrCategoryNotFound
+			return repository.ErrCategoryNotFound
 		}
 
 		return err
@@ -97,7 +93,7 @@ func (repo *CategoryRepository) Delete(ctx context.Context, id string) error {
 	}
 
 	if resp.DeletedCount == 0 {
-		return ErrCategoryNotFound
+		return repository.ErrCategoryNotFound
 	}
 
 	return err
@@ -111,7 +107,7 @@ func (repo *CategoryRepository) getOneByField(ctx context.Context, field string,
 
 	if err := resp.Decode(&category); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return category, ErrCategoryNotFound
+			return category, repository.ErrCategoryNotFound
 		}
 
 		return category, err

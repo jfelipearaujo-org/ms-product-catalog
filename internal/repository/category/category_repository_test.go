@@ -262,7 +262,7 @@ func TestCategoryRepository_Update(t *testing.T) {
 
 		// Assert
 		assert.Error(mt, err)
-		assert.ErrorIs(mt, err, ErrCategoryNotFound)
+		assert.ErrorIs(mt, err, repository.ErrCategoryNotFound)
 	})
 }
 
@@ -385,7 +385,7 @@ func TestCategoryRepository_getOneByField(t *testing.T) {
 
 		// Assert
 		assert.Error(mt, err)
-		assert.ErrorIs(mt, err, ErrCategoryNotFound)
+		assert.ErrorIs(mt, err, repository.ErrCategoryNotFound)
 		assert.Empty(mt, resp)
 	})
 }

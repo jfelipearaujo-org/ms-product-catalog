@@ -8,16 +8,16 @@ import (
 )
 
 type Product struct {
-	Id   primitive.ObjectID `bson:"_id,omitempty"`
-	UUID string             `bson:"uuid"`
+	Id   primitive.ObjectID `bson:"_id,omitempty" json:"-"`
+	UUID string             `bson:"uuid" json:"id"`
 
-	Title       string   `bson:"title"`
-	Description string   `bson:"description"`
-	Price       float64  `bson:"price"`
-	Category    Category `bson:"category"`
+	Title       string   `bson:"title" json:"title"`
+	Description string   `bson:"description" json:"description"`
+	Price       float64  `bson:"price" json:"price"`
+	Category    Category `bson:"category" json:"category"`
 
-	CreatedAt time.Time `bson:"created_at"`
-	UpdatedAt time.Time `bson:"updated_at"`
+	CreatedAt time.Time `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time `bson:"updated_at" json:"updated_at"`
 }
 
 func NewProduct(

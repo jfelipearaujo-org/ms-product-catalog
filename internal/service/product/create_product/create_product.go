@@ -2,15 +2,15 @@ package create_product
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/provider"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/shared/errors"
 )
 
-type CreateProduct interface {
-	Handle(ctx context.Context, request CreateProductDto) error
+type CreateProductService interface {
+	Handle(ctx context.Context, request CreateProductDto) (*entity.Product, error)
 }
 
 type Service struct {
@@ -31,14 +31,14 @@ func NewService(
 	}
 }
 
-func (s *Service) Handle(ctx context.Context, request CreateProductDto) error {
+func (s *Service) Handle(ctx context.Context, request CreateProductDto) (*entity.Product, error) {
 	if err := request.Validate(); err != nil {
-		return err
+		return nil, errors.ErrRequestNotValid
 	}
 
 	category, err := s.categoryRepository.GetByTitle(ctx, request.CategoryTitle)
 	if err != nil {
-		return fmt.Errorf("error to search the category: %w", err)
+		return nil, err
 	}
 
 	product := entity.NewProduct(request.Title,
@@ -48,8 +48,8 @@ func (s *Service) Handle(ctx context.Context, request CreateProductDto) error {
 		s.timeProvider.GetTime())
 
 	if err := s.productRepository.Create(ctx, product); err != nil {
-		return fmt.Errorf("error to create the product: %w", err)
+		return nil, err
 	}
 
-	return nil
+	return product, nil
 }

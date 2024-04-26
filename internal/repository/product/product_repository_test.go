@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -117,7 +118,7 @@ func TestProductRepository_GetByID(t *testing.T) {
 
 		// Assert
 		assert.Error(mt, err)
-		assert.ErrorIs(mt, err, ErrProductNotFound)
+		assert.ErrorIs(mt, err, repository.ErrProductNotFound)
 		assert.Empty(mt, resp)
 	})
 }
@@ -138,7 +139,7 @@ func TestProductRepository_GetByTitle(t *testing.T) {
 
 		// Assert
 		assert.Error(mt, err)
-		assert.ErrorIs(mt, err, ErrProductNotFound)
+		assert.ErrorIs(mt, err, repository.ErrProductNotFound)
 		assert.Empty(mt, resp)
 	})
 }
@@ -268,7 +269,7 @@ func TestProductRepository_GetByAll(t *testing.T) {
 		var expectedLength int = 1
 
 		// Act
-		count, resp, err := repo.GetAll(context.Background(), pagination)
+		count, resp, err := repo.GetAll(context.Background(), pagination, repository.GetAllProductsFilter{})
 
 		// Assert
 		assert.NoError(mt, err)
@@ -340,7 +341,7 @@ func TestProductRepository_Update(t *testing.T) {
 
 		// Assert
 		assert.Error(mt, err)
-		assert.ErrorIs(mt, err, ErrProductNotFound)
+		assert.ErrorIs(mt, err, repository.ErrProductNotFound)
 	})
 }
 
@@ -471,7 +472,7 @@ func TestProductRepository_getOneByField(t *testing.T) {
 
 		// Assert
 		assert.Error(mt, err)
-		assert.ErrorIs(mt, err, ErrProductNotFound)
+		assert.ErrorIs(mt, err, repository.ErrProductNotFound)
 		assert.Empty(mt, resp)
 	})
 }
