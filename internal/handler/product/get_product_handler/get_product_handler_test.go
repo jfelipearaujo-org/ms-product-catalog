@@ -1,4 +1,4 @@
-package delete_category_handler
+package get_product_handler
 
 import (
 	baseErr "errors"
@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/service/mocks"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/shared/errors"
@@ -15,23 +16,19 @@ import (
 )
 
 func TestHandle(t *testing.T) {
-	t.Run("Should delete the category", func(t *testing.T) {
+	t.Run("Should return the product", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockDeleteCategoryService(t)
+		service := mocks.NewMockGetProductService(t)
 
-		service.On("Handle", mock.Anything, mock.Anything).
-			Return(nil).
+		service.On("Handle", mock.Anything, mock.Anything, mock.Anything).
+			Return(entity.Product{}, nil).
 			Once()
 
-		req := httptest.NewRequest(echo.DELETE, "/categories", nil)
-		req.Header.Set("Content-Type", "application/json")
-
+		req := httptest.NewRequest(echo.GET, "/products", nil)
 		resp := httptest.NewRecorder()
 
-		e := echo.New()
-		ctx := e.NewContext(req, resp)
-		ctx.SetParamNames("id")
-		ctx.SetParamValues("1")
+		echo := echo.New()
+		ctx := echo.NewContext(req, resp)
 
 		handler := NewHandler(service)
 
@@ -40,28 +37,24 @@ func TestHandle(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		assert.Equal(t, http.StatusNoContent, resp.Code)
-		assert.Empty(t, resp.Body.String())
+		assert.Equal(t, http.StatusOK, resp.Code)
+		assert.JSONEq(t, `{"id":"", "title":"", "description":"", "price": 0, "created_at":"0001-01-01T00:00:00Z", "updated_at":"0001-01-01T00:00:00Z", "category": {"id":"", "title":"", "description":"", "created_at":"0001-01-01T00:00:00Z", "updated_at":"0001-01-01T00:00:00Z"}}`, resp.Body.String())
 		service.AssertExpectations(t)
 	})
 
-	t.Run("Should return error when request is invalid", func(t *testing.T) {
+	t.Run("Should return validation error", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockDeleteCategoryService(t)
+		service := mocks.NewMockGetProductService(t)
 
-		service.On("Handle", mock.Anything, mock.Anything).
-			Return(errors.ErrRequestNotValid).
+		service.On("Handle", mock.Anything, mock.Anything, mock.Anything).
+			Return(entity.Product{}, errors.ErrRequestNotValid).
 			Once()
 
-		req := httptest.NewRequest(echo.DELETE, "/categories", nil)
-		req.Header.Set("Content-Type", "application/json")
-
+		req := httptest.NewRequest(echo.GET, "/products", nil)
 		resp := httptest.NewRecorder()
 
 		e := echo.New()
 		ctx := e.NewContext(req, resp)
-		ctx.SetParamNames("id")
-		ctx.SetParamValues("1")
 
 		handler := NewHandler(service)
 
@@ -83,23 +76,21 @@ func TestHandle(t *testing.T) {
 		service.AssertExpectations(t)
 	})
 
-	t.Run("Should return error when category not found", func(t *testing.T) {
+	t.Run("Should return error when the product is not found", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockDeleteCategoryService(t)
+		service := mocks.NewMockGetProductService(t)
 
-		service.On("Handle", mock.Anything, mock.Anything).
-			Return(repository.ErrCategoryNotFound).
+		service.On("Handle", mock.Anything, mock.Anything, mock.Anything).
+			Return(entity.Product{}, repository.ErrProductNotFound).
 			Once()
 
-		req := httptest.NewRequest(echo.DELETE, "/categories", nil)
+		req := httptest.NewRequest(echo.GET, "/products", nil)
 		req.Header.Set("Content-Type", "application/json")
 
 		resp := httptest.NewRecorder()
 
 		e := echo.New()
 		ctx := e.NewContext(req, resp)
-		ctx.SetParamNames("id")
-		ctx.SetParamValues("1")
 
 		handler := NewHandler(service)
 
@@ -115,29 +106,25 @@ func TestHandle(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, he.Code)
 		assert.Equal(t, errors.AppError{
 			Code:    http.StatusNotFound,
-			Message: "error to find the category",
-			Details: "category not found",
+			Message: "error to find the product",
+			Details: "product not found",
 		}, he.Message)
 		service.AssertExpectations(t)
 	})
 
-	t.Run("Should return error when internal server error", func(t *testing.T) {
+	t.Run("Should return internal server error", func(t *testing.T) {
 		// Arrange
-		service := mocks.NewMockDeleteCategoryService(t)
+		service := mocks.NewMockGetProductService(t)
 
-		service.On("Handle", mock.Anything, mock.Anything).
-			Return(baseErr.New("error")).
+		service.On("Handle", mock.Anything, mock.Anything, mock.Anything).
+			Return(entity.Product{}, baseErr.New("error")).
 			Once()
 
-		req := httptest.NewRequest(echo.DELETE, "/categories", nil)
-		req.Header.Set("Content-Type", "application/json")
-
+		req := httptest.NewRequest(echo.GET, "/products", nil)
 		resp := httptest.NewRecorder()
 
 		e := echo.New()
 		ctx := e.NewContext(req, resp)
-		ctx.SetParamNames("id")
-		ctx.SetParamValues("1")
 
 		handler := NewHandler(service)
 

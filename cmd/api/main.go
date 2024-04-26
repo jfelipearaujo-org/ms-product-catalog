@@ -25,7 +25,7 @@ func init() {
 func main() {
 	ctx := context.Background()
 
-	config, err := loader.NewLoader().GetEnvironmentFromFile(ctx, "../../.env")
+	config, err := loader.NewLoader().GetEnvironmentFromFile(ctx, ".env")
 	if err != nil {
 		slog.Error("error loading environment", "error", err)
 		panic(err)

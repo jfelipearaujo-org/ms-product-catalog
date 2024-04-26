@@ -2,17 +2,12 @@ package get_product
 
 import (
 	"context"
-	"errors"
 
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 )
 
-var (
-	ErrInvalidRequest = errors.New("invalid request, you must provide a ID or a Title")
-)
-
-type GetProduct interface {
+type GetProductService interface {
 	Handle(ctx context.Context, request GetProductDto) (entity.Product, error)
 }
 
@@ -27,13 +22,9 @@ func NewService(repository repository.ProductRepository) *Service {
 }
 
 func (s Service) Handle(ctx context.Context, request GetProductDto) (entity.Product, error) {
-	if request.UUID != "" {
-		return s.repository.GetByID(ctx, request.UUID)
+	if err := request.Validate(); err != nil {
+		return entity.Product{}, err
 	}
 
-	if request.Title != "" {
-		return s.repository.GetByTitle(ctx, request.Title)
-	}
-
-	return entity.Product{}, ErrInvalidRequest
+	return s.repository.GetByID(ctx, request.UUID)
 }

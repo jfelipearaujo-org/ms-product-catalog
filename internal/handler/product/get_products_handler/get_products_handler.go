@@ -1,38 +1,37 @@
-package get_category_handler
+package get_products_handler
 
 import (
 	"net/http"
 
-	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
-	"github.com/jfelipearaujo-org/ms-product-catalog/internal/service/category/get_category"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/service/product/get_products"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/shared/errors"
 	"github.com/labstack/echo/v4"
 )
 
 type Handler struct {
-	service get_category.GetCategoryService
+	service get_products.GetProductsService
 }
 
-func NewHandler(service get_category.GetCategoryService) *Handler {
+func NewHandler(service get_products.GetProductsService) *Handler {
 	return &Handler{
 		service: service,
 	}
 }
 
 func (h *Handler) Handle(ctx echo.Context) error {
-	req := get_category.GetCategoryDto{}
+	req := get_products.GetProductsDto{}
 
 	if err := ctx.Bind(&req); err != nil {
 		return errors.NewHttpAppError(http.StatusBadRequest, "invalid request", err)
 	}
 
+	req.SetDefaults()
+
 	context := ctx.Request().Context()
 
-	category, err := h.service.Handle(context, req.Pagination, req)
+	count, categories, err := h.service.Handle(context, req.Pagination, req)
 	if err != nil {
-		if err == repository.ErrCategoryNotFound {
-			return errors.NewHttpAppError(http.StatusNotFound, "error to find the category", err)
-		}
 		if err == errors.ErrRequestNotValid {
 			return errors.NewHttpAppError(http.StatusUnprocessableEntity, "validation error", err)
 		}
@@ -40,5 +39,7 @@ func (h *Handler) Handle(ctx echo.Context) error {
 		return errors.NewHttpAppError(http.StatusInternalServerError, "internal server error", err)
 	}
 
-	return ctx.JSON(http.StatusOK, category)
+	resp := common.NewPaginationResponse(req.Page, (count/req.Size)+1, count, categories)
+
+	return ctx.JSON(http.StatusOK, resp)
 }

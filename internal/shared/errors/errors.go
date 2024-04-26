@@ -10,6 +10,7 @@ var (
 	ErrNotFound              error = baseErrors.New("content not found")
 	ErrRequestNotValid       error = baseErrors.New("request not valid, please check the fields")
 	ErrCategoryAlreadyExists error = baseErrors.New("category already exists")
+	ErrProductAlreadyExists  error = baseErrors.New("product already exists")
 )
 
 type AppError struct {

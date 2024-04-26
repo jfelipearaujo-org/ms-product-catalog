@@ -6,6 +6,7 @@ import (
 
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -15,10 +16,6 @@ import (
 
 const (
 	ProductCollection = "product"
-)
-
-var (
-	ErrProductNotFound = errors.New("product not found")
 )
 
 type ProductRepository struct {
@@ -58,8 +55,26 @@ func (repo *ProductRepository) GetByCategoryTitle(ctx context.Context, categoryT
 	return repo.getManyByFieldPaginated(ctx, bson.M{"category.title": categoryTitle}, pagination)
 }
 
-func (repo *ProductRepository) GetAll(ctx context.Context, pagination common.Pagination) (int64, []entity.Product, error) {
-	return repo.getManyByFieldPaginated(ctx, bson.M{}, pagination)
+func (repo *ProductRepository) GetAll(ctx context.Context, pagination common.Pagination, filter repository.GetAllProductsFilter) (int64, []entity.Product, error) {
+	filters := []bson.M{}
+
+	if filter.Title != "" {
+		filters = append(filters, bson.M{"title": filter.Title})
+	}
+
+	if filter.CategoryTitle != "" {
+		filters = append(filters, bson.M{"category.title": filter.CategoryTitle})
+	}
+
+	var query interface{}
+
+	if len(filters) > 0 {
+		query = bson.M{"$and": filters}
+	} else {
+		query = bson.M{}
+	}
+
+	return repo.getManyByFieldPaginated(ctx, query, pagination)
 }
 
 func (repo *ProductRepository) Update(ctx context.Context, product *entity.Product) error {
@@ -77,7 +92,7 @@ func (repo *ProductRepository) Update(ctx context.Context, product *entity.Produ
 		query,
 		options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(product); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return ErrProductNotFound
+			return repository.ErrProductNotFound
 		}
 
 		return err
@@ -93,7 +108,7 @@ func (repo *ProductRepository) Delete(ctx context.Context, id string) error {
 	}
 
 	if resp.DeletedCount == 0 {
-		return ErrProductNotFound
+		return repository.ErrProductNotFound
 	}
 
 	return err
@@ -107,7 +122,7 @@ func (repo *ProductRepository) getOneByField(ctx context.Context, field string, 
 
 	if err := resp.Decode(&product); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return product, ErrProductNotFound
+			return product, repository.ErrProductNotFound
 		}
 
 		return product, err
@@ -116,11 +131,11 @@ func (repo *ProductRepository) getOneByField(ctx context.Context, field string, 
 	return product, nil
 }
 
-func (repo *ProductRepository) getManyByFieldPaginated(ctx context.Context, query primitive.M, pagination common.Pagination) (int64, []entity.Product, error) {
+func (repo *ProductRepository) getManyByFieldPaginated(ctx context.Context, query interface{}, pagination common.Pagination) (int64, []entity.Product, error) {
 	var products []entity.Product
 
 	countOpts := options.Count().SetHint("_id_")
-	count, err := repo.collection.CountDocuments(ctx, bson.M{}, countOpts)
+	count, err := repo.collection.CountDocuments(ctx, query, countOpts)
 	if err != nil {
 		return 0, products, err
 	}
