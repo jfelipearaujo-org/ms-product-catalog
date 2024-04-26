@@ -16,7 +16,7 @@ func TestNewServer(t *testing.T) {
 			},
 			DbConfig: &environment.DatabaseConfig{
 				DbName: "db",
-				Url:    "db://host:1234",
+				Url:    "mongodb://host:1234",
 			},
 		}
 

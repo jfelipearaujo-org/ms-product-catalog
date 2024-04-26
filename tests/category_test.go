@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
@@ -48,33 +49,87 @@ func TestFeatures(t *testing.T) {
 }
 
 // Steps
-type appFeature struct {
-	url string
+type feature struct {
+	URL    string
+	Body   string
+	Status int
 }
 
-func (af *appFeature) aCategory(ctx context.Context, arg1 string) (context.Context, error) {
-	res, err := http.Get(fmt.Sprintf("%s/categories", af.url))
+func enrichContext(ctx context.Context, feat feature) (context.Context, error) {
+	return context.WithValue(ctx, feature{}, feat), nil
+}
+
+func fromContext(ctx context.Context) (feature, error) {
+	val := ctx.Value(feature{})
+	if val == nil {
+		return feature{}, fmt.Errorf("value not found in context")
+	}
+
+	return val.(feature), nil
+}
+
+func aCategory(ctx context.Context, categoryType string) (context.Context, error) {
+	feat, err := fromContext(ctx)
 	if err != nil {
 		return ctx, err
 	}
 
-	if res.StatusCode != http.StatusOK {
-		return ctx, fmt.Errorf("Expected status code 200, got %d", res.StatusCode)
+	if categoryType == "valid" {
+		feat.Body = `{"title": "Test Category", "description": "Test Description"}`
+	} else {
+		feat.Body = `{"title": "Test Category"}`
+	}
+
+	return enrichContext(ctx, feat)
+}
+
+func iCreateTheCategory(ctx context.Context) (context.Context, error) {
+	feat, err := fromContext(ctx)
+	if err != nil {
+		return ctx, err
+	}
+
+	route := fmt.Sprintf("%s/categories", feat.URL)
+	req, err := http.NewRequest(http.MethodPost, route, bytes.NewBuffer([]byte(feat.Body)))
+	if err != nil {
+		return ctx, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return ctx, err
+	}
+
+	feat.Status = resp.StatusCode
+
+	return enrichContext(ctx, feat)
+}
+
+func theCategoryIsCreated(ctx context.Context) (context.Context, error) {
+	feat, err := fromContext(ctx)
+	if err != nil {
+		return ctx, err
+	}
+
+	if feat.Status != http.StatusCreated {
+		return ctx, fmt.Errorf("Expected status code 201, got %d", feat.Status)
 	}
 
 	return ctx, nil
 }
 
-func (af *appFeature) iCreateTheCategory(ctx context.Context) (context.Context, error) {
-	return ctx, godog.ErrPending
-}
+func theCategoryIsNotCreated(ctx context.Context) (context.Context, error) {
+	feat, err := fromContext(ctx)
+	if err != nil {
+		return ctx, err
+	}
 
-func (af *appFeature) theCategoryIsCreated(ctx context.Context) (context.Context, error) {
-	return ctx, godog.ErrPending
-}
+	if feat.Status != http.StatusUnprocessableEntity {
+		return ctx, fmt.Errorf("Expected status code 422, got %d", feat.Status)
+	}
 
-func (af *appFeature) theCategoryIsNotCreated(ctx context.Context) (context.Context, error) {
-	return ctx, godog.ErrPending
+	return ctx, nil
 }
 
 type testContext struct {
@@ -87,7 +142,6 @@ var (
 )
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
-	af := &appFeature{}
 
 	ctx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		// Create a network
@@ -113,7 +167,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 				NetworkAliases: map[string][]string{
 					network.Name: {"mongo"},
 				},
-				WaitingFor: wait.ForListeningPort("27017"),
+				WaitingFor: wait.ForLog("Waiting for connections"),
 			},
 			Started: true,
 		})
@@ -178,9 +232,11 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return ctx, err
 		}
 
-		port := ports["8080/tcp"][0].HostPort
+		if len(ports["8080/tcp"]) == 0 {
+			return ctx, fmt.Errorf("Port 8080/tcp not found")
+		}
 
-		af.url = fmt.Sprintf("http://localhost:%s/api/v1", port)
+		port := ports["8080/tcp"][0].HostPort
 
 		// Run health check
 		res, err := http.Get(fmt.Sprintf("http://localhost:%s/health", port))
@@ -208,13 +264,15 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			},
 		}
 
-		return ctx, nil
+		return enrichContext(ctx, feature{
+			URL: fmt.Sprintf("http://localhost:%s/api/v1", port),
+		})
 	})
 
-	ctx.Step(`^a "([^"]*)" category$`, af.aCategory)
-	ctx.Step(`^I create the category$`, af.iCreateTheCategory)
-	ctx.Step(`^the category is created$`, af.theCategoryIsCreated)
-	ctx.Step(`^the category is not created$`, af.theCategoryIsNotCreated)
+	ctx.Step(`^a "([^"]*)" category$`, aCategory)
+	ctx.Step(`^I create the category$`, iCreateTheCategory)
+	ctx.Step(`^the category is created$`, theCategoryIsCreated)
+	ctx.Step(`^the category is not created$`, theCategoryIsNotCreated)
 
 	ctx.After(func(ctx context.Context, sc *godog.Scenario, err error) (context.Context, error) {
 		if err != nil {

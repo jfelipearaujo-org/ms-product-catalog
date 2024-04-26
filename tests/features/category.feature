@@ -8,7 +8,7 @@ Feature: category
         When I create the category
         Then the category is created
 
-    # Scenario: Create a category with invalid data
-    #     Given a "invalid" category
-    #     When I create the category
-    #     Then the category is not created
+    Scenario: Create a category with invalid data
+        Given a "invalid" category
+        When I create the category
+        Then the category is not created

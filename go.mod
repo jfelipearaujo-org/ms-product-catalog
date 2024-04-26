@@ -13,7 +13,6 @@ require (
 	github.com/sethvargo/go-envconfig v1.0.1
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.30.0
-	github.com/testcontainers/testcontainers-go/modules/mongodb v0.30.0
 	go.mongodb.org/mongo-driver v1.15.0
 )
 
