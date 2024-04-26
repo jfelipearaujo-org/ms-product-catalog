@@ -2,6 +2,7 @@ package create_product
 
 import (
 	"github.com/go-playground/validator/v10"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/shared/errors"
 )
 
 type CreateProductDto struct {
@@ -15,7 +16,7 @@ func (dto *CreateProductDto) Validate() error {
 	validator := validator.New()
 
 	if err := validator.Struct(dto); err != nil {
-		return err
+		return errors.ErrRequestNotValid
 	}
 
 	return nil

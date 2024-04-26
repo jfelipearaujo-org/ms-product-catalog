@@ -1,4 +1,4 @@
-package delete_category
+package delete_product
 
 import (
 	"context"
@@ -12,9 +12,9 @@ import (
 )
 
 func TestHandle(t *testing.T) {
-	t.Run("Should delete the category", func(t *testing.T) {
+	t.Run("Should delete the product", func(t *testing.T) {
 		// Arrange
-		repository := mocks.NewMockCategoryRepository(t)
+		repository := mocks.NewMockProductRepository(t)
 
 		repository.On("Delete", mock.Anything, mock.Anything).
 			Return(nil).
@@ -22,7 +22,7 @@ func TestHandle(t *testing.T) {
 
 		service := NewService(repository)
 
-		req := DeleteCategoryDto{
+		req := DeleteProductDto{
 			UUID: uuid.NewString(),
 		}
 
@@ -36,11 +36,11 @@ func TestHandle(t *testing.T) {
 
 	t.Run("Should return an error when the request is invalid", func(t *testing.T) {
 		// Arrange
-		repository := mocks.NewMockCategoryRepository(t)
+		repository := mocks.NewMockProductRepository(t)
 
 		service := NewService(repository)
 
-		req := DeleteCategoryDto{
+		req := DeleteProductDto{
 			UUID: "abc",
 		}
 
@@ -54,7 +54,7 @@ func TestHandle(t *testing.T) {
 
 	t.Run("Should return an error when the product can't be deleted", func(t *testing.T) {
 		// Arrange
-		repository := mocks.NewMockCategoryRepository(t)
+		repository := mocks.NewMockProductRepository(t)
 
 		repository.On("Delete", mock.Anything, mock.Anything).
 			Return(errors.New("error")).
@@ -62,7 +62,7 @@ func TestHandle(t *testing.T) {
 
 		service := NewService(repository)
 
-		req := DeleteCategoryDto{
+		req := DeleteProductDto{
 			UUID: uuid.NewString(),
 		}
 

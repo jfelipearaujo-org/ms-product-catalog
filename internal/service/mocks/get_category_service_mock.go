@@ -5,10 +5,7 @@ package mocks
 import (
 	context "context"
 
-	common "github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
-
 	entity "github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
-
 	get_category "github.com/jfelipearaujo-org/ms-product-catalog/internal/service/category/get_category"
 
 	mock "github.com/stretchr/testify/mock"
@@ -19,9 +16,9 @@ type MockGetCategoryService struct {
 	mock.Mock
 }
 
-// Handle provides a mock function with given fields: ctx, pagination, request
-func (_m *MockGetCategoryService) Handle(ctx context.Context, pagination common.Pagination, request get_category.GetCategoryDto) (entity.Category, error) {
-	ret := _m.Called(ctx, pagination, request)
+// Handle provides a mock function with given fields: ctx, request
+func (_m *MockGetCategoryService) Handle(ctx context.Context, request get_category.GetCategoryDto) (entity.Category, error) {
+	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Handle")
@@ -29,17 +26,17 @@ func (_m *MockGetCategoryService) Handle(ctx context.Context, pagination common.
 
 	var r0 entity.Category
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, common.Pagination, get_category.GetCategoryDto) (entity.Category, error)); ok {
-		return rf(ctx, pagination, request)
+	if rf, ok := ret.Get(0).(func(context.Context, get_category.GetCategoryDto) (entity.Category, error)); ok {
+		return rf(ctx, request)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, common.Pagination, get_category.GetCategoryDto) entity.Category); ok {
-		r0 = rf(ctx, pagination, request)
+	if rf, ok := ret.Get(0).(func(context.Context, get_category.GetCategoryDto) entity.Category); ok {
+		r0 = rf(ctx, request)
 	} else {
 		r0 = ret.Get(0).(entity.Category)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, common.Pagination, get_category.GetCategoryDto) error); ok {
-		r1 = rf(ctx, pagination, request)
+	if rf, ok := ret.Get(1).(func(context.Context, get_category.GetCategoryDto) error); ok {
+		r1 = rf(ctx, request)
 	} else {
 		r1 = ret.Error(1)
 	}

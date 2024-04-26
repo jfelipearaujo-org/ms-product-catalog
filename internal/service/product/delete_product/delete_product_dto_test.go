@@ -1,4 +1,4 @@
-package delete_category
+package delete_product
 
 import (
 	"testing"
@@ -11,7 +11,7 @@ import (
 func TestValidate(t *testing.T) {
 	t.Run("Should return validation error", func(t *testing.T) {
 		// Arrange
-		dto := DeleteCategoryDto{}
+		dto := DeleteProductDto{}
 
 		// Act
 		err := dto.Validate()
@@ -22,7 +22,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("Should return nil", func(t *testing.T) {
 		// Arrange
-		dto := DeleteCategoryDto{
+		dto := DeleteProductDto{
 			UUID: uuid.NewString(),
 		}
 

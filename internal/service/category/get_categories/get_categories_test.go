@@ -59,7 +59,9 @@ func TestHandle(t *testing.T) {
 		// Arrange
 		repository := mocks.NewMockCategoryRepository(t)
 
-		repository.On("GetAll", mock.Anything, mock.Anything, mock.Anything).Return(int64(0), []entity.Category{}, errors.New("error")).Once()
+		repository.On("GetAll", mock.Anything, mock.Anything, mock.Anything).
+			Return(int64(0), []entity.Category{}, errors.New("error")).
+			Once()
 
 		service := NewService(repository)
 
@@ -73,6 +75,34 @@ func TestHandle(t *testing.T) {
 
 		// Act
 		count, resp, err := service.Handle(context.Background(), common.Pagination{}, GetCategoriesDto{})
+
+		// Assert
+		assert.Error(t, err)
+		assert.Equal(t, expected.count, count)
+		assert.Equal(t, resp, expected.categories)
+		repository.AssertExpectations(t)
+	})
+
+	t.Run("Should return error when request is invalid", func(t *testing.T) {
+		// Arrange
+		repository := mocks.NewMockCategoryRepository(t)
+
+		service := NewService(repository)
+
+		expected := struct {
+			count      int64
+			categories []entity.Category
+		}{
+			count:      0,
+			categories: []entity.Category{},
+		}
+
+		req := GetCategoriesDto{
+			Title: randomString(101),
+		}
+
+		// Act
+		count, resp, err := service.Handle(context.Background(), common.Pagination{}, req)
 
 		// Assert
 		assert.Error(t, err)

@@ -6,7 +6,6 @@ import (
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/entity"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/provider"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/repository"
-	"github.com/jfelipearaujo-org/ms-product-catalog/internal/shared/errors"
 )
 
 type CreateProductService interface {
@@ -33,7 +32,7 @@ func NewService(
 
 func (s *Service) Handle(ctx context.Context, request CreateProductDto) (*entity.Product, error) {
 	if err := request.Validate(); err != nil {
-		return nil, errors.ErrRequestNotValid
+		return nil, err
 	}
 
 	category, err := s.categoryRepository.GetByTitle(ctx, request.CategoryTitle)

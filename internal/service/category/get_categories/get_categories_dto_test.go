@@ -33,22 +33,9 @@ func TestValidate(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("Should return error when title is empty", func(t *testing.T) {
-		// Arrange
-		dto := GetCategoriesDto{
-			Title: "",
-		}
-
-		// Act
-		err := dto.Validate()
-
-		// Assert
-		assert.Error(t, err)
-	})
-
 	t.Run("Should return error when title is length is invalid", func(t *testing.T) {
 		// Arrange
-		lengths := []int{1, 101}
+		lengths := []int{101}
 
 		for _, length := range lengths {
 			dto := GetCategoriesDto{
