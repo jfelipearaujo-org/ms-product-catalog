@@ -1,0 +1,24 @@
+name: bdd
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test:
+    name: Tests (BDD)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ vars.GO_VERSION }}
+
+      - name: Run BDD Tests
+        run: go test -count=1 ./tests/... -test.v -test.run ^TestFeatures$
