@@ -1,4 +1,4 @@
-name: tests
+name: unit
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Tests
+    name: Tests (Unit)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,9 +29,6 @@ jobs:
           name: coverage
           path: cov.out
           retention-days: 1
-
-      - name: Run BDD Tests
-        run: go test -count=1 ./tests/... -test.v -test.run ^TestFeatures$
 
       - name: Run GoSec Security Scanner
         uses: securego/gosec@master
