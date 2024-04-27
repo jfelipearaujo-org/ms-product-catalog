@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/environment"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/environment/loader"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/server"
 )
@@ -25,7 +26,18 @@ func init() {
 func main() {
 	ctx := context.Background()
 
-	config, err := loader.NewLoader().GetEnvironmentFromFile(ctx, ".env")
+	loader := loader.NewLoader()
+
+	var config *environment.Config
+	var err error
+
+	if len(os.Args) > 1 && os.Args[1] == "local" {
+		slog.Info("loading environment from .env file")
+		config, err = loader.GetEnvironmentFromFile(ctx, ".env")
+	} else {
+		config, err = loader.GetEnvironment(ctx)
+	}
+
 	if err != nil {
 		slog.Error("error loading environment", "error", err)
 		panic(err)

@@ -10,15 +10,15 @@ build: ## Build the application to the output folder (default: ./buil/main)
 	@go build -o build/main cmd/api/main.go
 
 build-docker: ## Build a container image and add the version and latest tag
-	@if command -v docker > /dev/null 2>&1 && docker-buildx version > /dev/null 2>&1; then \
+	@if command -v docker > /dev/null; then \
 		echo "Building..."; \
-		docker-buildx build -t jose.araujo/api-transactions:latest -t jose.araujo/api-transactions:$$(git rev-parse --short HEAD) .; \
+		docker buildx build -t ms-product-catalog:latest -t ms-product-catalog:$$(git rev-parse --short HEAD) .; \
 	else \
 		read -p "Docker Buildx is not installed on your machine. Do you want to install it? [Y/n] " choice; \
 	    if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
 	        brew install docker-buildx; \
 	        echo "Building..."; \
-			docker-buildx build -t jose.araujo/api-transactions:latest -t jose.araujo/api-transactions:$$(git rev-parse --short HEAD) .; \
+			docker buildx build -t ms-product-catalog:latest -t ms-product-catalog:$$(git rev-parse --short HEAD) .; \
 	    else \
 	        echo "You chose not to install Docker Buildx. Exiting..."; \
 	        exit 1; \
@@ -73,6 +73,10 @@ run: ## Run the application
 test: ## Test the application
 	@echo "Testing..."
 	@go test -race -count=1 ./internal/... -coverprofile=coverage.out
+
+test-bdd: ## Run BDD tests
+	@echo "Running BDD tests..."
+	@go test -count=1 ./tests/... -test.v -test.run ^TestFeatures$
 
 cover: ## View the coverage
 	@echo "Analyzing coverage..."
@@ -197,6 +201,22 @@ fmt-docs: ## Format generated Swagger docs using swag
 			swag fmt -d internal -g cmd/api/main.go; \
 		else \
 			echo "You chose not to intall swag. Exiting..."; \
+			exit 1; \
+		fi; \
+	fi
+
+gen-scaffold-bdd: ## Gen BDD scaffold using godog
+	@if command -v godog > /dev/null; then \
+		echo "Generating BDD scaffold..."; \
+		godog ./tests/features; \
+	else \
+		read -p "Go 'godog' is not installed on your machine. Do you want to install it? [Y/n] " choice; \
+		if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
+			go install github.com/cucumber/godog/cmd/godog@latest; \
+			echo "Generating BDD scaffold..."; \
+			godog ./tests/features; \
+		else \
+			echo "You chose not to intall godog. Exiting..."; \
 			exit 1; \
 		fi; \
 	fi

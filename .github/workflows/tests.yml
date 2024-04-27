@@ -30,6 +30,9 @@ jobs:
           path: cov.out
           retention-days: 1
 
+      - name: Run BDD Tests
+        run: go test -count=1 ./tests/... -test.v -test.run ^TestFeatures$
+
       - name: Run GoSec Security Scanner
         uses: securego/gosec@master
         with:
