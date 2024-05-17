@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ms-product-catalog-config
+  namespace: ns-products
+  labels:
+    app: ms-product-catalog
+data:
+  API_PORT: "8080"
+  API_ENV_NAME: production
+  API_VERSION: v1
+  DB_NAME: products
