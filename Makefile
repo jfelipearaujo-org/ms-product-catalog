@@ -229,6 +229,9 @@ watch: ## Live reload using air
 		fi; \
 	fi
 
+TAG := $(shell git describe --tags --abbrev=0 2>/dev/null)
+VERSION := $(shell echo $(TAG) | sed 's/v//')
+
 tag: ## Create or bump the version tag
 	@if [ -z "$(TAG)" ]; then \
         echo "No previous version found. Creating v1.0 tag..."; \
