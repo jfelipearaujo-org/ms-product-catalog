@@ -7,23 +7,28 @@ help:  ## Display this help
 ##@ CI/CD
 build: ## Build the application to the output folder (default: ./buil/main)
 	@echo "Building..."	
-	@go build -o build/main cmd/api/main.go
+	@go build -race -o build/main cmd/api/main.go
 
-build-docker: ## Build a container image and add the version and latest tag
+docker-build: ## Build a container image and add the version and latest tag
 	@if command -v docker > /dev/null; then \
 		echo "Building..."; \
-		docker buildx build -t ms-product-catalog:latest -t ms-product-catalog:$$(git rev-parse --short HEAD) .; \
+		docker buildx build -t jsfelipearaujo/ms-product-catalog:latest -t jsfelipearaujo/ms-product-catalog:$$(git rev-parse --short HEAD) .; \
 	else \
 		read -p "Docker Buildx is not installed on your machine. Do you want to install it? [Y/n] " choice; \
-	    if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
-	        brew install docker-buildx; \
-	        echo "Building..."; \
-			docker buildx build -t ms-product-catalog:latest -t ms-product-catalog:$$(git rev-parse --short HEAD) .; \
-	    else \
-	        echo "You chose not to install Docker Buildx. Exiting..."; \
-	        exit 1; \
-	    fi; \
+		if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
+			brew install docker-buildx; \
+			echo "Building..."; \
+			docker buildx build -t jsfelipearaujo/ms-product-catalog:latest -t jsfelipearaujo/ms-product-catalog:$$(git rev-parse --short HEAD) .; \
+		else \
+			echo "You chose not to install Docker Buildx. Exiting..."; \
+			exit 1; \
+		fi; \
 	fi
+
+docker-push: ## Push the container image to the registry
+	echo "Pushing..."; \
+	docker push jsfelipearaujo/ms-product-catalog:latest && \
+	docker push jsfelipearaujo/ms-product-catalog:$$(git rev-parse --short HEAD)
 
 clean: ## Clean the binary
 	@echo "Cleaning..."
@@ -43,6 +48,70 @@ sec: ## Security checker
 			echo "You chose not to intall gosec. Exiting..."; \
 			exit 1; \
 		fi; \
+	fi
+
+k8s-attach: ## Attach to the application running in Kubernetes
+	aws eks update-kubeconfig --name fastfood --region us-east-1
+
+k8s-copy-config: ## Copy the application configuration to Kubernetes
+	cat /home/jfelipearaujo/.kube/config > k8s/kubeconfig
+
+k8s-deploy: ## Deploy the application to Kubernetes
+	@if [ "$(id)" != "" ]; then \
+		echo "Generating sensitive data..."; \
+		cat k8s/service-account.yaml | sed "s/{{AWS_ACCOUNT_ID}}/$(id)/g" > k8s/service-account-sensitive.yaml; \
+		echo "Deploying..."; \
+		kubectl apply -f k8s/namespace.yaml; \
+		kubectl apply -f k8s/configmap.yaml; \
+		kubectl apply -f k8s/service-account-sensitive.yaml; \
+		kubectl apply -f k8s/secret.yaml; \
+		kubectl apply -f k8s/deployment.yaml; \
+		kubectl apply -f k8s/service.yaml; \
+		kubectl apply -f k8s/hpa.yaml; \
+		kubectl apply -f k8s/ingres.yaml; \
+		echo "Deployed!"; \
+		rm k8s/service-account-sensitive.yaml; \
+	else \
+		read -p "please, inform the AWS Account ID to be used: " id; \
+		if [ "$$id" != "" ]; then \
+			echo "Generating sensitive data..."; \
+			cat k8s/service-account.yaml | sed "s/{{AWS_ACCOUNT_ID}}/$$id/g" > k8s/service-account-sensitive.yaml; \
+			echo "Deploying..."; \
+			kubectl apply -f k8s/namespace.yaml; \
+			kubectl apply -f k8s/configmap.yaml; \
+			kubectl apply -f k8s/service-account-sensitive.yaml; \
+			kubectl apply -f k8s/secret.yaml; \
+			kubectl apply -f k8s/deployment.yaml; \
+			kubectl apply -f k8s/service.yaml; \
+			kubectl apply -f k8s/hpa.yaml; \
+			kubectl apply -f k8s/ingres.yaml; \
+			echo "Deployed!"; \
+			rm k8s/service-account-sensitive.yaml; \
+		else \
+			echo "You must inform the AWS Account ID to be used. Exiting..."; \
+			exit 1; \
+		fi; \
+	fi
+
+k8s-destroy: ## Destroy the application from Kubernetes
+	@read -p "please, inform the AWS Account ID to be used: " id; \
+	if [ "$$id" != "" ]; then \
+		echo "Generating sensitive data..."; \
+		cat k8s/service-account.yaml | sed "s/{{AWS_ACCOUNT_ID}}/$$id/g" > k8s/service-account-sensitive.yaml; \
+		echo "Destroying..."; \
+		kubectl delete -f k8s/ingres.yaml; \
+		kubectl delete -f k8s/hpa.yaml; \
+		kubectl delete -f k8s/service.yaml; \
+		kubectl delete -f k8s/deployment.yaml; \
+		kubectl delete -f k8s/secret.yaml; \
+		kubectl delete -f k8s/service-account-sensitive.yaml; \
+		kubectl delete -f k8s/configmap.yaml; \
+		kubectl delete -f k8s/namespace.yaml; \
+		echo "Destroyed!"; \
+		rm k8s/service-account-sensitive.yaml; \
+	else \
+		echo "You must inform the AWS Account ID to be used. Exiting..."; \
+		exit 1; \
 	fi
 
 lint: ## Go Linter
@@ -132,19 +201,44 @@ watch: ## Live reload using air
 	fi
 
 	@if command -v air > /dev/null; then \
-	    air; \
-	    echo "Watching...";\
+		air; \
+		echo "Watching...";\
 	else \
-	    read -p "Go's 'air' is not installed on your machine. Do you want to install it? [Y/n] " choice; \
-	    if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
-	        go install github.com/cosmtrek/air@latest; \
-	        air; \
-	        echo "Watching...";\
-	    else \
-	        echo "You chose not to install air. Exiting..."; \
-	        exit 1; \
-	    fi; \
+		read -p "Go's 'air' is not installed on your machine. Do you want to install it? [Y/n] " choice; \
+		if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
+			go install github.com/cosmtrek/air@latest; \
+			air; \
+			echo "Watching...";\
+		else \
+			echo "You chose not to install air. Exiting..."; \
+			exit 1; \
+		fi; \
 	fi
+
+tag: ## Create or bump the version tag
+	@if [ -z "$(TAG)" ]; then \
+        echo "No previous version found. Creating v1.0 tag..."; \
+        git tag v1.0; \
+    else \
+        echo "Previous version found: $(VERSION)"; \
+        read -p "Bump major version (M/m) or release version (R/r)? " choice; \
+        if [ "$$choice" = "M" ] || [ "$$choice" = "m" ]; then \
+            echo "Bumping major version..."; \
+			major=$$(echo $(VERSION) | cut -d'.' -f1); \
+            major=$$(expr $$major + 1); \
+            new_version=$$major.0; \
+        elif [ "$$choice" = "R" ] || [ "$$choice" = "r" ]; then \
+            echo "Bumping release version..."; \
+			release=$$(echo $(VERSION) | cut -d'.' -f2); \
+            release=$$(expr $$release + 1); \
+            new_version=$$(echo $(VERSION) | cut -d'.' -f1).$$release; \
+        else \
+            echo "Invalid choice. Aborting."; \
+            exit 1; \
+        fi; \
+        echo "Creating tag for version v$$new_version..."; \
+        git tag v$$new_version; \
+    fi
 
 ##@ Auto generated files
 gen-mocks: ## Gen mock files using mockery

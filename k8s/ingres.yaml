@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ms-product-catalog-ingress
+  namespace: ns-products
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /products
+            pathType: Prefix
+            backend:
+              service:
+                name: ms-product-catalog
+                port:
+                  number: 8080

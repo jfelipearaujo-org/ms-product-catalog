@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-product-catalog
+  namespace: ns-products
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-product-catalog
+  template:
+    metadata:
+      labels:
+        app: ms-product-catalog
+    spec:
+      serviceAccountName: sa-products
+      containers:
+        - name: ms-product-catalog
+          image: jsfelipearaujo/ms-product-catalog:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 100m
+            requests:
+              memory: 100Mi
+              cpu: 100m
+          envFrom:
+            - configMapRef:
+                name: ms-product-catalog-config
+          env:
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-url
+                  key: url
+          volumeMounts:
+            - name: secrets-store-inline
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "aws-secrets"
