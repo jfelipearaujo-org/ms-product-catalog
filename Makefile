@@ -69,8 +69,8 @@ k8s-deploy: ## Deploy the application to Kubernetes
 		kubectl apply -f k8s/service.yaml; \
 		kubectl apply -f k8s/hpa.yaml; \
 		kubectl apply -f k8s/ingres.yaml; \
-		echo "Deployed!"; \
 		rm k8s/service-account-sensitive.yaml; \
+		echo "Deployed!"; \
 	else \
 		read -p "please, inform the AWS Account ID to be used: " id; \
 		if [ "$$id" != "" ]; then \
@@ -85,8 +85,8 @@ k8s-deploy: ## Deploy the application to Kubernetes
 			kubectl apply -f k8s/service.yaml; \
 			kubectl apply -f k8s/hpa.yaml; \
 			kubectl apply -f k8s/ingres.yaml; \
-			echo "Deployed!"; \
 			rm k8s/service-account-sensitive.yaml; \
+			echo "Deployed!"; \
 		else \
 			echo "You must inform the AWS Account ID to be used. Exiting..."; \
 			exit 1; \
@@ -94,10 +94,7 @@ k8s-deploy: ## Deploy the application to Kubernetes
 	fi
 
 k8s-destroy: ## Destroy the application from Kubernetes
-	@read -p "please, inform the AWS Account ID to be used: " id; \
-	if [ "$$id" != "" ]; then \
-		echo "Generating sensitive data..."; \
-		cat k8s/service-account.yaml | sed "s/{{AWS_ACCOUNT_ID}}/$$id/g" > k8s/service-account-sensitive.yaml; \
+	@if [ "$(id)" != "" ]; then \
 		echo "Destroying..."; \
 		kubectl delete -f k8s/ingres.yaml; \
 		kubectl delete -f k8s/hpa.yaml; \
@@ -107,11 +104,28 @@ k8s-destroy: ## Destroy the application from Kubernetes
 		kubectl delete -f k8s/service-account-sensitive.yaml; \
 		kubectl delete -f k8s/configmap.yaml; \
 		kubectl delete -f k8s/namespace.yaml; \
-		echo "Destroyed!"; \
 		rm k8s/service-account-sensitive.yaml; \
+		echo "Destroyed!"; \
 	else \
-		echo "You must inform the AWS Account ID to be used. Exiting..."; \
-		exit 1; \
+		read -p "please, inform the AWS Account ID to be used: " id; \
+		if [ "$$id" != "" ]; then \
+			echo "Generating sensitive data..."; \
+			cat k8s/service-account.yaml | sed "s/{{AWS_ACCOUNT_ID}}/$$id/g" > k8s/service-account-sensitive.yaml; \
+			echo "Destroying..."; \
+			kubectl delete -f k8s/ingres.yaml; \
+			kubectl delete -f k8s/hpa.yaml; \
+			kubectl delete -f k8s/service.yaml; \
+			kubectl delete -f k8s/deployment.yaml; \
+			kubectl delete -f k8s/secret.yaml; \
+			kubectl delete -f k8s/service-account-sensitive.yaml; \
+			kubectl delete -f k8s/configmap.yaml; \
+			kubectl delete -f k8s/namespace.yaml; \
+			rm k8s/service-account-sensitive.yaml; \
+			echo "Destroyed!"; \
+		else \
+			echo "You must inform the AWS Account ID to be used. Exiting..."; \
+			exit 1; \
+		fi; \
 	fi
 
 lint: ## Go Linter
