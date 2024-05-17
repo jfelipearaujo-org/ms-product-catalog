@@ -3,7 +3,14 @@ kind: Ingress
 metadata:
   name: ms-product-catalog-ingress
   namespace: ns-products
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/permanent-redirect-code: "308"
+    nginx.ingress.kubernetes.io/default-backend: "default-backend-nginx"
 spec:
+  ingressClassName: nginx
   rules:
     - http:
         paths:
