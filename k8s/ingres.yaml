@@ -4,14 +4,19 @@ metadata:
   name: ms-product-catalog-ingress
   namespace: ns-products
   annotations:
-    nginx.ingress.kubernetes.io/app-root: /products
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/permanent-redirect-code: "308"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /products(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: ms-product-catalog

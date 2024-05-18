@@ -19,7 +19,18 @@ spec:
           image: jsfelipearaujo/ms-product-catalog:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /products/health
+          #     port: http
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 5
+          #   timeoutSeconds: 2
+          #   failureThreshold: 4
+          #   successThreshold: 1
           resources:
             limits:
               memory: 200Mi
