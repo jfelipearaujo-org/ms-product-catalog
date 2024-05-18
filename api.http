@@ -5,7 +5,7 @@ GET {{host}}/health
 Content-Type: application/json
 
 ### Get Categories  (title, page, size)
-GET {{host}}/api/v1/categories?page=1&size=100&title=category
+GET {{host}}/api/v1/categories?page=1&size=100
 Content-Type: application/json
 
 ### Get Category
@@ -17,8 +17,8 @@ POST {{host}}/api/v1/categories
 Content-Type: application/json
 
 {
-    "title": "category",
-    "description": "category description"
+    "title": "Bebidas",
+    "description": "Bebidas diversas"
 }
 
 ### Delete Category

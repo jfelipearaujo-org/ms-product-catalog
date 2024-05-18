@@ -15,7 +15,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /products(/|$)(.*)
+          - path: /products-catalog(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
