@@ -169,6 +169,12 @@ func TestProductRepository_GetByCategoryID(t *testing.T) {
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
 				getPrimitiveProduct(id, now)),
 			mtest.CreateCursorResponse(0,
 				"foo.bar",
@@ -214,6 +220,12 @@ func TestProductRepository_GetByCategoryTitle(t *testing.T) {
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
 				getPrimitiveProduct(id, now)),
 			mtest.CreateCursorResponse(0,
 				"foo.bar",
@@ -250,6 +262,12 @@ func TestProductRepository_GetByAll(t *testing.T) {
 		}
 
 		mt.AddMockResponses([]primitive.D{
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
@@ -502,6 +520,12 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
 				getPrimitiveProduct(id, now)),
 			mtest.CreateCursorResponse(0,
 				"foo.bar",
@@ -566,6 +590,12 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 				bson.D{
 					{Key: "n", Value: 1},
 				}),
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
 			mongoInvalidOperation,
 		}...)
 
@@ -593,6 +623,12 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 		}
 
 		mt.AddMockResponses([]primitive.D{
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
@@ -632,6 +668,12 @@ func TestProductRepository_getManyByFieldPaginated(t *testing.T) {
 		}
 
 		mt.AddMockResponses([]primitive.D{
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,

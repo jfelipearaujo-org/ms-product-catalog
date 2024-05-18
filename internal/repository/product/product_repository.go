@@ -134,7 +134,19 @@ func (repo *ProductRepository) getOneByField(ctx context.Context, field string, 
 func (repo *ProductRepository) getManyByFieldPaginated(ctx context.Context, query interface{}, pagination common.Pagination) (int64, []entity.Product, error) {
 	var products []entity.Product
 
-	countOpts := options.Count().SetHint("_id_")
+	indexModel := mongo.IndexModel{
+		Keys: bson.D{{
+			Key:   "created_at",
+			Value: 1,
+		}},
+	}
+
+	indexName, err := repo.collection.Indexes().CreateOne(ctx, indexModel)
+	if err != nil {
+		return 0, products, err
+	}
+
+	countOpts := options.Count().SetHint(indexName)
 	count, err := repo.collection.CountDocuments(ctx, query, countOpts)
 	if err != nil {
 		return 0, products, err
