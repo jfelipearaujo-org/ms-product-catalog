@@ -4,13 +4,13 @@ metadata:
   name: ms-product-catalog-ingress
   namespace: ns-products
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/app-root: /products
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
-          - path: /products
+          - path: /
             pathType: Prefix
             backend:
               service:
