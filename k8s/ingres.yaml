@@ -4,6 +4,7 @@ metadata:
   name: ms-product-catalog-ingress
   namespace: ns-products
 spec:
+  ingressClassName: nginx
   rules:
     - http:
         paths:
