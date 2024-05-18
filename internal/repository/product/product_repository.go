@@ -141,12 +141,12 @@ func (repo *ProductRepository) getManyByFieldPaginated(ctx context.Context, quer
 		}},
 	}
 
-	indexName, err := repo.collection.Indexes().CreateOne(ctx, indexModel)
+	_, err := repo.collection.Indexes().CreateOne(ctx, indexModel)
 	if err != nil {
 		return 0, products, err
 	}
 
-	countOpts := options.Count().SetHint(indexName)
+	countOpts := options.Count()
 	count, err := repo.collection.CountDocuments(ctx, query, countOpts)
 	if err != nil {
 		return 0, products, err
