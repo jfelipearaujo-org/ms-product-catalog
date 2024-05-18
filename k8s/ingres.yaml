@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: ms-product-catalog-ingress
   namespace: ns-products
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
