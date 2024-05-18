@@ -15,8 +15,9 @@ func TestNewServer(t *testing.T) {
 				Port: 8080,
 			},
 			DbConfig: &environment.DatabaseConfig{
-				DbName: "db",
-				Url:    "mongodb://host:1234",
+				DbName:        "db",
+				Url:           "mongodb://host:1234",
+				UrlSecretName: "db-secret-url",
 			},
 		}
 
