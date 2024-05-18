@@ -180,6 +180,12 @@ func TestCategoryRepository_GetAll(t *testing.T) {
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
 				getPrimitiveCategory(id, now)),
 			mtest.CreateCursorResponse(0,
 				"foo.bar",
@@ -415,6 +421,12 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
 				getPrimitiveCategory(id, now)),
 			mtest.CreateCursorResponse(0,
 				"foo.bar",
@@ -479,6 +491,12 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 				bson.D{
 					{Key: "n", Value: 1},
 				}),
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
 			mongoInvalidOperation,
 		}...)
 
@@ -506,6 +524,12 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 		}
 
 		mt.AddMockResponses([]primitive.D{
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,
@@ -545,6 +569,12 @@ func TestCategoryRepository_getManyByFieldPaginated(t *testing.T) {
 		}
 
 		mt.AddMockResponses([]primitive.D{
+			mtest.CreateCursorResponse(1,
+				"foo.bar",
+				mtest.FirstBatch,
+				bson.D{
+					{Key: "n", Value: 1},
+				}),
 			mtest.CreateCursorResponse(1,
 				"foo.bar",
 				mtest.FirstBatch,

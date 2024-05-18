@@ -1,6 +1,7 @@
 package create_category_handler
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/common"
@@ -26,13 +27,14 @@ func NewHandler(
 }
 
 func (h *Handler) Handle(ctx echo.Context) error {
+	context := ctx.Request().Context()
+
 	req := create_category.CreateCategoryDto{}
 
 	if err := ctx.Bind(&req); err != nil {
+		slog.ErrorContext(context, "error binding request", slog.String("error", err.Error()))
 		return errors.NewHttpAppError(http.StatusBadRequest, "invalid request", err)
 	}
-
-	context := ctx.Request().Context()
 
 	count, _, err := h.getCategoriesService.Handle(context,
 		common.Pagination{},
@@ -40,6 +42,7 @@ func (h *Handler) Handle(ctx echo.Context) error {
 			Title: req.Title,
 		})
 	if err != nil {
+		slog.ErrorContext(context, "error getting categories", slog.String("error", err.Error()))
 		return errors.NewHttpAppError(http.StatusInternalServerError, "internal server error", err)
 	}
 
@@ -53,6 +56,7 @@ func (h *Handler) Handle(ctx echo.Context) error {
 			return errors.NewHttpAppError(http.StatusUnprocessableEntity, "validation error", err)
 		}
 
+		slog.ErrorContext(context, "error creating category", slog.String("error", err.Error()))
 		return errors.NewHttpAppError(http.StatusInternalServerError, "internal server error", err)
 	}
 
