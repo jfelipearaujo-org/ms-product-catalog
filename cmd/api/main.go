@@ -60,7 +60,7 @@ func main() {
 
 	dbUrl, err := secret.GetSecret(ctx, config.DbConfig.UrlSecretName)
 	if err != nil {
-		slog.ErrorContext(ctx, "error getting secret", "secret_name", config.DbConfig.UrlSecretName, "error", err)
+		slog.Error("error getting secret", "secret_name", config.DbConfig.UrlSecretName, "error", err)
 		panic(err)
 	}
 
