@@ -14,6 +14,7 @@ import (
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/environment"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/environment/loader"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/server"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/shared/logger"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
@@ -36,16 +37,18 @@ func main() {
 	var err error
 
 	if len(os.Args) > 1 && os.Args[1] == "local" {
-		slog.Info("loading environment from .env file")
+		slog.InfoContext(ctx, "loading environment from .env file")
 		config, err = loader.GetEnvironmentFromFile(ctx, ".env")
 	} else {
 		config, err = loader.GetEnvironment(ctx)
 	}
 
 	if err != nil {
-		slog.Error("error loading environment", "error", err)
+		slog.ErrorContext(ctx, "error loading environment", "error", err)
 		panic(err)
 	}
+
+	logger.SetupLog(config)
 
 	cloudConfig, err := awsConfig.LoadDefaultConfig(ctx)
 	if err != nil {
@@ -60,7 +63,7 @@ func main() {
 
 	dbUrl, err := secret.GetSecret(ctx, config.DbConfig.UrlSecretName)
 	if err != nil {
-		slog.Error("error getting secret", "secret_name", config.DbConfig.UrlSecretName, "error", err)
+		slog.ErrorContext(ctx, "error getting secret", "secret_name", config.DbConfig.UrlSecretName, "error", err)
 		panic(err)
 	}
 
@@ -69,12 +72,12 @@ func main() {
 	server := server.NewServer(config)
 
 	go func() {
-		slog.Info("🚀 Server started", "address", server.Addr)
+		slog.InfoContext(ctx, "🚀 Server started", "address", server.Addr)
 		if err := server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-			slog.Error("http server error", "error", err)
+			slog.ErrorContext(ctx, "http server error", "error", err)
 			panic(err)
 		}
-		slog.Info("http server stopped serving requests")
+		slog.InfoContext(ctx, "http server stopped serving requests")
 	}()
 
 	sc := make(chan os.Signal, 1)
@@ -85,7 +88,7 @@ func main() {
 	defer shutdown()
 
 	if err := server.Shutdown(ctx); err != nil {
-		slog.Error("error while trying to shutdown the server", "error", err)
+		slog.ErrorContext(ctx, "error while trying to shutdown the server", "error", err)
 	}
-	slog.Info("graceful shutdown completed ✅")
+	slog.InfoContext(ctx, "graceful shutdown completed ✅")
 }

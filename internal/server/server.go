@@ -27,6 +27,7 @@ import (
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/service/product/delete_product"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/service/product/get_product"
 	"github.com/jfelipearaujo-org/ms-product-catalog/internal/service/product/get_products"
+	"github.com/jfelipearaujo-org/ms-product-catalog/internal/shared/logger"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -53,6 +54,7 @@ func NewServer(config *environment.Config) *http.Server {
 
 func (server *Server) RegisterRoutes() http.Handler {
 	e := echo.New()
+	e.Use(logger.Middleware())
 	e.Use(middleware.Recover())
 
 	server.registerHealthCheck(e)

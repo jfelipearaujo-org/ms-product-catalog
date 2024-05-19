@@ -10,6 +10,10 @@ type ApiConfig struct {
 	ApiVersion string `env:"VERSION, default=v1"`
 }
 
+func (c *ApiConfig) IsDevelopment() bool {
+	return c.EnvName == "development"
+}
+
 type DatabaseConfig struct {
 	DbName        string `env:"NAME, required"`
 	Url           string `env:"URL, required"`
