@@ -59,7 +59,7 @@ func main() {
 		cloudConfig.BaseEndpoint = aws.String(config.CloudConfig.BaseEndpoint)
 	}
 
-	secret := cloud.NewSecretService(config.DbConfig.UrlSecretName, cloudConfig)
+	secret := cloud.NewSecretService(cloudConfig)
 
 	dbUrl, err := secret.GetSecret(ctx, config.DbConfig.UrlSecretName)
 	if err != nil {

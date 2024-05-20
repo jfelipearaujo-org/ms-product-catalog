@@ -8,14 +8,12 @@ import (
 )
 
 type AwsDbUrlSecretService struct {
-	SecretName string
-	Client     *secretsmanager.Client
+	Client *secretsmanager.Client
 }
 
-func NewSecretService(secretName string, config aws.Config) SecretService {
+func NewSecretService(config aws.Config) SecretService {
 	return &AwsDbUrlSecretService{
-		SecretName: secretName,
-		Client:     secretsmanager.NewFromConfig(config),
+		Client: secretsmanager.NewFromConfig(config),
 	}
 }
 
