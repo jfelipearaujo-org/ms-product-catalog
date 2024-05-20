@@ -10,3 +10,5 @@ data:
   API_ENV_NAME: production
   API_VERSION: v1
   DB_NAME: products
+  DB_URL: todo
+  DB_URL_SECRET_NAME: db-products-url-secret

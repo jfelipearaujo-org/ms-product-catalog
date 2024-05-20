@@ -17,6 +17,7 @@ func cleanEnv() {
 
 	os.Unsetenv("DB_NAME")
 	os.Unsetenv("DB_URL")
+	os.Unsetenv("DB_URL_SECRET_NAME")
 }
 
 func TestGetEnvironment(t *testing.T) {
@@ -28,6 +29,7 @@ func TestGetEnvironment(t *testing.T) {
 
 		t.Setenv("DB_NAME", "test")
 		t.Setenv("DB_URL", "db://host:1234")
+		t.Setenv("DB_URL_SECRET_NAME", "db-secret-url")
 
 		expected := &environment.Config{
 			ApiConfig: &environment.ApiConfig{
@@ -36,8 +38,12 @@ func TestGetEnvironment(t *testing.T) {
 				ApiVersion: "v1",
 			},
 			DbConfig: &environment.DatabaseConfig{
-				DbName: "test",
-				Url:    "db://host:1234",
+				DbName:        "test",
+				Url:           "db://host:1234",
+				UrlSecretName: "db-secret-url",
+			},
+			CloudConfig: &environment.CloudConfig{
+				BaseEndpoint: "",
 			},
 		}
 
@@ -79,8 +85,12 @@ func TestGetEnvironmentFromFile(t *testing.T) {
 				ApiVersion: "v1",
 			},
 			DbConfig: &environment.DatabaseConfig{
-				DbName: "test",
-				Url:    "db://host:1234",
+				DbName:        "test",
+				Url:           "db://host:1234",
+				UrlSecretName: "db-secret-url",
+			},
+			CloudConfig: &environment.CloudConfig{
+				BaseEndpoint: "",
 			},
 		}
 

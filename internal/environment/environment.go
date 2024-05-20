@@ -10,14 +10,28 @@ type ApiConfig struct {
 	ApiVersion string `env:"VERSION, default=v1"`
 }
 
+func (c *ApiConfig) IsDevelopment() bool {
+	return c.EnvName == "development"
+}
+
 type DatabaseConfig struct {
-	DbName string `env:"NAME, required"`
-	Url    string `env:"URL, required"`
+	DbName        string `env:"NAME, required"`
+	Url           string `env:"URL, required"`
+	UrlSecretName string `env:"URL_SECRET_NAME, required"`
+}
+
+type CloudConfig struct {
+	BaseEndpoint string `env:"BASE_ENDPOINT"`
+}
+
+func (c *CloudConfig) IsBaseEndpointSet() bool {
+	return c.BaseEndpoint != ""
 }
 
 type Config struct {
-	ApiConfig *ApiConfig      `env:",prefix=API_"`
-	DbConfig  *DatabaseConfig `env:",prefix=DB_"`
+	ApiConfig   *ApiConfig      `env:",prefix=API_"`
+	DbConfig    *DatabaseConfig `env:",prefix=DB_"`
+	CloudConfig *CloudConfig    `env:",prefix=AWS_"`
 }
 
 type Environment interface {

@@ -15,8 +15,9 @@ func TestGetInstance(t *testing.T) {
 		// Arrange
 		config := &environment.Config{
 			DbConfig: &environment.DatabaseConfig{
-				DbName: "db",
-				Url:    "mongodb://host:1234",
+				DbName:        "db",
+				Url:           "mongodb://host:1234",
+				UrlSecretName: "db-secret-url",
 			},
 		}
 
@@ -40,8 +41,9 @@ func TestHealth(t *testing.T) {
 		// Arrange
 		config := &environment.Config{
 			DbConfig: &environment.DatabaseConfig{
-				DbName: "db",
-				Url:    "mongodb://host:1234",
+				DbName:        "db",
+				Url:           "mongodb://host:1234",
+				UrlSecretName: "db-secret-url",
 			},
 		}
 
@@ -62,8 +64,9 @@ func TestHealth(t *testing.T) {
 		// Arrange
 		config := &environment.Config{
 			DbConfig: &environment.DatabaseConfig{
-				DbName: "db",
-				Url:    "mongodb://host:1234",
+				DbName:        "db",
+				Url:           "mongodb://host:1234",
+				UrlSecretName: "db-secret-url",
 			},
 		}
 

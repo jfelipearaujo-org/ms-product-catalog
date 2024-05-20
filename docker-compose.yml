@@ -14,24 +14,17 @@ services:
     networks:
       - api-network
 
-  # api:
-  #   depends_on:
-  #     - mongo_db
-  #   image: ms-product-catalog:latest
-  #   container_name: api
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - 8080:8080
-  #   environment:
-  #     - API_PORT=8080
-  #     - API_ENV_NAME=development
-  #     - API_VERSION=v1
-  #     - DB_NAME=product_db
-  #     - DB_URL=mongodb://product:product@mongo_db:27017/
-  #   networks:
-  #     - api-network
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"            # LocalStack Gateway
+      - "4510-4559:4510-4559"  # external services port range
+    environment:
+      - DEBUG=0
+      - DEFAULT_REGION=us-east-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - ./scripts/localstack/:/etc/localstack/init/ready.d/
 
   mongo_express:
     depends_on:
