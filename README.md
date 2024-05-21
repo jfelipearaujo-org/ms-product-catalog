@@ -34,3 +34,5 @@ make destroy
 ## Automated deployment
 
 The automated deployment is triggered by a GitHub Action.
+
+test
